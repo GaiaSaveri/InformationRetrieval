@@ -1,5 +1,5 @@
-*.ipynb_chekpoints
-*.DS_Store
+.ipynb_chekpoints
+.DS_Store
 IRbook.pdf
-/notes
-/slides
+notes/
+slides/
