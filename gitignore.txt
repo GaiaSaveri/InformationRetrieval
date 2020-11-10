@@ -1,0 +1,5 @@
+notes/
+slides/
+IRbook.pdf
+.DS_Store
+.ipynb_checkpoints
