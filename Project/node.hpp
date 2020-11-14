@@ -2,13 +2,16 @@
 #define __NODE_
 
 #include<vector>
-//#include<set>
 #include<functional> //std::less
+
+#include"linkedlist.hpp"
 
 template<class k, class v, class c=std::less<k> >
 struct node {
 
   template<class Tk, class Tv, class Tc> friend class BPTree;
+
+  using LinkedList = List<v>;
 
   /** to discriminate between internal and leaf nodes */
   bool leaf;
@@ -20,12 +23,11 @@ struct node {
   union p { //only one of the following will be active for each node
     /** pointers to children nodes (for internal nodes) */
     std::vector<node*> children;
-    /** pointers to values (for leaf nodes) */
-    //PROBAIBLMENTE DA CAMBIARE CON UN POINTER AD UNA LINKED LIST!
-    std::vector<v> values;
-
+    /** pointers to linked lists of values (for leaf nodes) */
+    std::vector<LinkedList> values;
+    /** constructor for the union */
     p() {}
-
+    /** destructor for the union */
     ~p() {
       children.clear();
       values.clear();
@@ -53,8 +55,10 @@ struct node {
   node(bool l, k key, v value){
     leaf = l;
     keys.push_back(key);
-    new (&this->ptrs.values) std::vector<v>;
-    this->ptrs.values.push_back(value);
+    new (&this->ptrs.values) std::vector<LinkedList>;
+    LinkedList list{};
+    list.insert(value, method::push_back);
+    this->ptrs.values.push_back(list);
     next = nullptr;
   }
 
