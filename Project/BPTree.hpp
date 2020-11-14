@@ -9,9 +9,9 @@
 
 #include<iostream>
 #include<vector>
-//#include<set>
 #include<memory>
 #include<algorithm> //std::upper_bound
+#include<queue>
 
 #include"node.hpp"
 
@@ -25,7 +25,7 @@ private:
   /** unique pointer to the root node */
   std::unique_ptr<Node> root;
   /** branching factor of the B+Tree */
-  int branchingFactor; //MAGARI METTERE UN DEFAULT!!
+  int branchingFactor; 
   /**
    *\brief auxiliary function to insert a key in an internal node
    *\param key key of the node to be inserted
@@ -72,10 +72,15 @@ public:
 
   //MANCANO TUTTI I REMOVE!
 
-  /*
+  /**
    *\brief function to print the keys at the leaves' level.
    */
   void printLeaves();
+
+  /*
+   *\brief function to print the B+tree level-wise
+   */
+   void printLevels();
 
   /**
    *\brief function to clear the content of the tree.

@@ -33,18 +33,41 @@ struct node {
   } ptrs;
   /** default constructor */
   node() = default;
+
   /** custom constructor */
   node(bool l){
-    //: leaf{l}, keys{std::vector<k>()}, next{nullptr} {}
     leaf = l;
+    //we created a leaf
+    if(l) new (&this->ptrs.values) std::vector<v>;
+    //we created an internal node
+    else if (!l) new (&this->ptrs.children) std::vector<node*>;
   }
-  /** custom constructor */
-  node(bool l, k key){
+
+  /**
+   *\brief custom constructor
+   *\param l boolean indicating wheter the node is or isn't a leaf node
+   *\param key key to insert in the node we are constructing
+   *\param value value to insert in the node we are contructing
+   *
+   */
+  node(bool l, k key, v value){
     leaf = l;
     keys.push_back(key);
-    //new (&this->ptrs.values) std::vector<v>;
-    //this->ptrs.values.push_back(value);
+    new (&this->ptrs.values) std::vector<v>;
+    this->ptrs.values.push_back(value);
     next = nullptr;
+  }
+
+  /**
+   *\brief custom constructor
+   *
+   */
+  node(bool l, k key, node* child1, node* child2){
+    leaf = l;
+    keys.push_back(key);
+    new (&this->ptrs.children) std::vector<node*>;
+    this->ptrs.children.push_back(child1);
+    this->ptrs.children.push_back(child2);
   }
 
   /**
