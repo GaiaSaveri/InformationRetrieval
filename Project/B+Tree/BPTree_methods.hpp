@@ -32,18 +32,16 @@ typename BPTree<Tk,Tv,Tc>::Node* BPTree<Tk,Tv,Tc>::searchLeaf(Tk key){
 }
 //--------------------------------- Search Values -----------------------------------//
 template<class Tk, class Tv, class Tc>
-typename BPTree<Tk,Tv,Tc>::LinkedList* BPTree<Tk,Tv,Tc>::searchValues(Tk key){
+void BPTree<Tk,Tv,Tc>::searchValues(Tk key, typename BPTree<Tk,Tv,Tc>::LinkedList& values){
   //search the leaf containing the key
   node<Tk,Tv,Tc>* leaf = searchLeaf(key);
   //if the key is actually present in the tree
   if(leaf){
     //index corresponding to the key we are searching for
     int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
-    return &leaf->ptrs.values.at(i);
-  } else{ //the key is not in the tree
-    //we return an empty linked list
-    static LinkedList l{};
-    return &l;
+    values = leaf->ptrs.values.at(i);
+  } else{
+    std::cout<<"the key is not in the tree"<<std::endl;
   }
 }
 //----------------------------- INSERTION METHODS -----------------------------------//

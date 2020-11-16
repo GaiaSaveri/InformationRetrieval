@@ -82,7 +82,7 @@ public:
    *\brief function to retrieve the linked list of values associated to a key.
    *
    */
-  LinkedList* searchValues(Tk key);
+  void searchValues(Tk key, LinkedList& values);
 
   /**
    *\brief function to insert a key an associated value in the B+Tree.
@@ -103,7 +103,7 @@ public:
   /*
    *\brief function to print the B+tree level-wise
    */
-   void printLevels();
+  void printLevels();
 
   /**
    *\brief function to clear the content of the tree.
@@ -111,13 +111,12 @@ public:
    *This function resets the root of the tree, so that the whole B+Tree is destroyed
    *without any memory leak.
    */
-   void clear() noexcept
-   {
+  void clear() noexcept {
      root.reset();
-   }
+  }
 
-   /** destructor for the B+Tree */
-   ~BPTree() = default;
+  /** destructor for the B+Tree */
+  ~BPTree() = default;
 
 };
 

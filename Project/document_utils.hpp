@@ -8,6 +8,7 @@
 #include<set>
 #include<algorithm>
 #include<cctype>
+#include<dirent.h>
 
 #include"stemming/porter2_stemmer.h"
 
@@ -93,6 +94,28 @@ void documentPreprocessing(std::vector<std::string>& words, std::string& filenam
   removeStopWords(words, stopwords, fileStopWords);
   stemming(words);
   removeDuplicates(words);
+}
+
+//read all filenames of a folder
+void readFolder(std::vector<std::string>& filenames){
+  DIR *dir;
+  struct dirent *ent;
+  std::string dirname = "data/small/";
+  std::string tmp;
+  if((dir=opendir("data/small"))!=nullptr){
+    while((ent = readdir(dir))!=nullptr){
+        filenames.push_back(ent->d_name);
+    }
+    closedir(dir);
+  }
+  else{
+    std::cout<<"not opened"<<std::endl;
+  }
+  filenames.erase(std::remove_if(filenames.begin(), filenames.end(),
+      [](std::string s){return (s=="." || s == "..");}), filenames.end());
+  //full path name to the document
+  std::transform(filenames.begin(), filenames.end(), filenames.begin(),
+    [dirname](std::string s){return s.insert(0,dirname);});
 }
 
 #endif
