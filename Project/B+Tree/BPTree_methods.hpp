@@ -50,7 +50,6 @@ template<class Tk, class Tv, class Tc>
 void BPTree<Tk,Tv,Tc>::insertFirst(Tk key, Tv value){
   if(!root.get()) { //the tree is empty
     root.reset(new Node(true, key, value));
-    //root is leaf now --> QUESTA PARTE POTREBBE CAMBIARE SE METTO LINKED LIST
   } else { //tree is non empty
     //starting from the root
     Node* current = root.get();
@@ -75,6 +74,7 @@ void BPTree<Tk,Tv,Tc>::insertFirst(Tk key, Tv value){
         for(int j = current->keys.size()-1; j>i; j--) {
           //shifting
           current->keys.at(j) = current->keys.at(j-1);
+          //SE BUG PERSISTE PROVA A METTERE =
           current->ptrs.values.at(j) = std::move(current->ptrs.values.at(j-1));
         }
         current->keys.at(i) = key;
@@ -172,11 +172,12 @@ void BPTree<Tk,Tv,Tc>::insertInternal(Tk key, typename BPTree<Tk,Tv,Tc>::Node** 
         }
         //insert in right position
         fakeNode.at(i) = key;
-        fakeNodeChildren.at(i+2) = *child;
+        fakeNodeChildren.at(i+1) = *child;
       }
       //actual splitting of the node
-      Tk partitionKey = fakeNode.at(fakeNode.size()/2);
       int partitionIdx = fakeNode.size()/2;
+      Tk partitionKey = fakeNode.at(partitionIdx);
+
 
       (*parent)->keys.resize(partitionIdx);
       (*parent)->ptrs.children.resize(partitionIdx + 1);
@@ -189,10 +190,10 @@ void BPTree<Tk,Tv,Tc>::insertInternal(Tk key, typename BPTree<Tk,Tv,Tc>::Node** 
       }
 
       Node* newNode = new Node(false);
-      for(int i=partitionIdx; i<fakeNode.size(); i++){
+      for(int i=partitionIdx+1; i<fakeNode.size(); i++){
         newNode->keys.push_back(fakeNode.at(i));
       }
-      for(int i=partitionIdx; i<fakeNodeChildren.size(); i++){
+      for(int i=partitionIdx+1; i<fakeNodeChildren.size(); i++){
         newNode->ptrs.children.push_back(fakeNodeChildren.at(i));
       }
       if((*parent) == root.get()){ //we splitted the root
@@ -201,7 +202,7 @@ void BPTree<Tk,Tv,Tc>::insertInternal(Tk key, typename BPTree<Tk,Tv,Tc>::Node** 
         root.reset(newRoot);
       } else { //we splitted an internal node
         //recursive call
-        insertInternal(newNode->keys.at(0), newNode->findParent(root.get(), *parent), &newNode);
+        insertInternal(partitionKey, newNode->findParent(root.get(), *parent), &newNode);
       }
     }
 }

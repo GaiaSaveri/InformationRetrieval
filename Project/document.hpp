@@ -50,7 +50,7 @@ struct Index{
   /** custom constructor */
   Index(std::vector<std::string>& filenames){
     readFolder(filenames);
-    for(int i=0; i<filenames.size(); i++){
+    for(int i=0; i<1; i++){
       Document d{i, filenames.at(i)};
       for(int j=0; j<d.doc.second.size(); j++)
         index.insert(d.doc.second.at(j), i);

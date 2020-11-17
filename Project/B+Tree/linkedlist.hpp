@@ -1,5 +1,5 @@
 /**
-  *\file linkedlist.h
+  *\file linkedlist.hpp
   *\author Gaia Saveri
   *\brief Class implementing a linked list
   */
@@ -116,6 +116,12 @@ public:
    *\param d list containing the "difference" if the two lists.
    */
   void difference(const List& l, List& d);
+
+  void isEmpty(){
+    if(!head.get()){
+      std::cout<<"Empty Linked List"<<std::endl;
+    }
+  }
   /**
    *\brief overload of the operator << to visualize the linked list
    */
