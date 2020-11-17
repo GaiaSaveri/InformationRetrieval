@@ -6,10 +6,10 @@
 
 #include"linkedlist.hpp"
 
-template<class k, class v, class c=std::less<k> >
+template<class k, class v>
 struct node {
 
-  template<class Tk, class Tv, class Tc> friend class BPTree;
+  template<class Tk, class Tv> friend class BPTree;
 
   using LinkedList = List<v>;
 
@@ -96,6 +96,38 @@ struct node {
   ~node() = default;
 };
 
-#include"node_methods.hpp"
+//#include"node_methods.hpp"
+
+template<class k, class v>
+node<k,v>** node<k,v>::findParent(node<k,v>* current, node<k,v>* child){
+  //ignore leaves and leaves' parents
+  if(current->leaf || current->ptrs.children.at(0)->leaf){
+    return nullptr;
+  }
+  static node* parent; //need to allocate this on the heap
+  for(int i=0; i<current->ptrs.children.size(); i++){
+    if(current->ptrs.children.at(i) == child){
+      parent = current;
+    } else {
+      node* tmp = current->ptrs.children.at(i);
+      findParent(tmp, child);
+    }
+  }
+  return &parent;
+}
+
+template<class k, class v>
+node<k,v>* node<k,v>::leftLeaf(){
+  if(this->leaf){
+    return this;
+  }
+  //current is not a leaf --> it has pointers to children
+  for(int i=0; i<this->ptrs.children.size(); i++){
+    if(this->ptrs.children.at(i)){ //it is not nullptr
+      return this->ptrs.children.at(i)->leftLeaf();
+    }
+  }
+  return nullptr;
+}
 
 #endif

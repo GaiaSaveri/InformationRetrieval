@@ -20,7 +20,7 @@ enum class method {push_back, push_front};
 template<class T>
 class List {
 
-  template<class Tk, class Tv, class Tc> friend class BPTree;
+  template<class Tk, class Tv> friend class BPTree;
   /**
     *\brief struct for the nodes of the linked list
     */
@@ -117,11 +117,6 @@ public:
    */
   void difference(const List& l, List& d);
 
-  void isEmpty(){
-    if(!head.get()){
-      std::cout<<"Empty Linked List"<<std::endl;
-    }
-  }
   /**
    *\brief overload of the operator << to visualize the linked list
    */

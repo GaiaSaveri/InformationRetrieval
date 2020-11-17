@@ -15,11 +15,11 @@
 
 #include"node.hpp"
 
-template<class Tk, class Tv, class Tc=std::less<Tk> >
+template<class Tk, class Tv>
 class BPTree {
 
 public:
-  using Node = node<Tk, Tv, Tc>;
+  using Node = node<Tk, Tv>;
   using LinkedList = List<Tv>;
 
 private:
@@ -49,8 +49,6 @@ private:
    */
   void addValue(Node* leaf, Tk key, Tv value);
 public:
-  /** comparison operator */
-  Tc comp;
 
   /** default constructor */
   BPTree() {

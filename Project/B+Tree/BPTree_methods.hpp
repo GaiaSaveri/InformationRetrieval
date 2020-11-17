@@ -7,8 +7,8 @@
 
 //--------------------------------- SEARCH METHODS -----------------------------------//
 //---------------------------------- Search Leaf -------------------------------------//
-template<class Tk, class Tv, class Tc>
-typename BPTree<Tk,Tv,Tc>::Node* BPTree<Tk,Tv,Tc>::searchLeaf(Tk key){
+template<class Tk, class Tv>
+typename BPTree<Tk,Tv>::Node* BPTree<Tk,Tv>::searchLeaf(Tk key){
   if(!root.get()){ //BPTree is empty
     //std::cout<<"empty tree"<<std::endl;
     return nullptr;
@@ -31,10 +31,10 @@ typename BPTree<Tk,Tv,Tc>::Node* BPTree<Tk,Tv,Tc>::searchLeaf(Tk key){
   }
 }
 //--------------------------------- Search Values -----------------------------------//
-template<class Tk, class Tv, class Tc>
-void BPTree<Tk,Tv,Tc>::searchValues(Tk key, typename BPTree<Tk,Tv,Tc>::LinkedList& values){
+template<class Tk, class Tv>
+void BPTree<Tk,Tv>::searchValues(Tk key, typename BPTree<Tk,Tv>::LinkedList& values){
   //search the leaf containing the key
-  node<Tk,Tv,Tc>* leaf = searchLeaf(key);
+  node<Tk,Tv>* leaf = searchLeaf(key);
   //if the key is actually present in the tree
   if(leaf){
     //index corresponding to the key we are searching for
@@ -46,8 +46,8 @@ void BPTree<Tk,Tv,Tc>::searchValues(Tk key, typename BPTree<Tk,Tv,Tc>::LinkedLis
 }
 //----------------------------- INSERTION METHODS -----------------------------------//
 //------------------------------- Insert first --------------------------------------//
-template<class Tk, class Tv, class Tc>
-void BPTree<Tk,Tv,Tc>::insertFirst(Tk key, Tv value){
+template<class Tk, class Tv>
+void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
   if(!root.get()) { //the tree is empty
     root.reset(new Node(true, key, value));
   } else { //tree is non empty
@@ -134,8 +134,8 @@ void BPTree<Tk,Tv,Tc>::insertFirst(Tk key, Tv value){
   }
 }
 //------------------------------- Insert Internal --------------------------------------//
-template<class Tk, class Tv, class Tc>
-void BPTree<Tk,Tv,Tc>::insertInternal(Tk key, typename BPTree<Tk,Tv,Tc>::Node** parent, typename BPTree<Tk,Tv,Tc>::Node** child) {
+template<class Tk, class Tv>
+void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node** parent, typename BPTree<Tk,Tv>::Node** child) {
   if((*parent)->keys.size()<branchingFactor-1){ //parent is not full
     int i = std::upper_bound((*parent)->keys.begin(), (*parent)->keys.end(), key) - (*parent)->keys.begin();
     //make space
@@ -207,17 +207,17 @@ void BPTree<Tk,Tv,Tc>::insertInternal(Tk key, typename BPTree<Tk,Tv,Tc>::Node** 
     }
 }
 //-------------------------------- Add Value --------------------------------------//
-template<class Tk, class Tv, class Tc>
-void BPTree<Tk,Tv,Tc>::addValue(typename BPTree<Tk,Tv,Tc>::Node* leaf, Tk key, Tv value){
+template<class Tk, class Tv>
+void BPTree<Tk,Tv>::addValue(typename BPTree<Tk,Tv>::Node* leaf, Tk key, Tv value){
   //index corresponding to the key we are searching for
   int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
   leaf->ptrs.values.at(i).insert(value, method::push_back);
 }
 //--------------------------------- Insert ----------------------------------------//
-template<class Tk, class Tv, class Tc>
-void BPTree<Tk,Tv,Tc>::insert(Tk key, Tv value){
+template<class Tk, class Tv>
+void BPTree<Tk,Tv>::insert(Tk key, Tv value){
   //look if the key is already present
-  node<Tk,Tv,Tc>* leaf = searchLeaf(key);
+  node<Tk,Tv>* leaf = searchLeaf(key);
   if(leaf){ //if the key is already present
     addValue(leaf, key, value);
   }
@@ -227,8 +227,8 @@ void BPTree<Tk,Tv,Tc>::insert(Tk key, Tv value){
 }
 //------------------------------ PRINT METHODS ------------------------------------//
 //------------------------------- Print Leaves ------------------------------------//
-template<class Tk, class Tv, class Tc>
-void BPTree<Tk,Tv,Tc>::printLeaves(){
+template<class Tk, class Tv>
+void BPTree<Tk,Tv>::printLeaves(){
   //pointer to the leftmost leaf starting from the root
   Node* ll = root.get()->leftLeaf();
 
@@ -246,8 +246,8 @@ void BPTree<Tk,Tv,Tc>::printLeaves(){
   std::cout<<std::endl;
 }
 //------------------------------- Print Levels ------------------------------------//
-template<class Tk, class Tv, class Tc>
-void BPTree<Tk,Tv,Tc>::printLevels(){
+template<class Tk, class Tv>
+void BPTree<Tk,Tv>::printLevels(){
   if(root.get()==nullptr){
     std::cout<<"Empty B+Tree"<<std::endl;
   }
