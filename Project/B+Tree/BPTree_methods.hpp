@@ -10,23 +10,20 @@
 template<class Tk, class Tv>
 typename BPTree<Tk,Tv>::Node* BPTree<Tk,Tv>::searchLeaf(Tk key){
   if(!root.get()){ //BPTree is empty
-    //std::cout<<"empty tree"<<std::endl;
     return nullptr;
   } else {
     Node* current = root.get();
-    while(current->leaf == false){
+    while(!current->leaf){
       int idx = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
-      current = current->ptrs.children.at(idx);
+      current = current->children.at(idx).get();
     }
 
     int idx = std::lower_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
 
     if(idx == current->keys.size() || current->keys.at(idx)!=key){
-      //std::cout<<"not found"<<std::endl;
       return nullptr;
     }
     //now current is a leaf node, at index idx we have the key we are searching for
-    //std::cout<<"found"<<std::endl;
     return current;
   }
 }
@@ -39,10 +36,25 @@ void BPTree<Tk,Tv>::searchValues(Tk key, typename BPTree<Tk,Tv>::LinkedList& val
   if(leaf){
     //index corresponding to the key we are searching for
     int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
-    values = leaf->ptrs.values.at(i);
+    values = leaf->values.at(i);
   } else{
     std::cout<<"the key is not in the tree"<<std::endl;
   }
+}
+//--------------------------------- Find parent -------------------------------------//
+template<class Tk, class Tv>
+typename BPTree<Tk,Tv>::Node* BPTree<Tk,Tv>::findParent(typename BPTree<Tk,Tv>::Node* child){
+  Node* tmp = root.get();
+  Tk key = child->keys.at(0);
+  bool found = 0;
+  while(!found){
+    int i = std::upper_bound(tmp->keys.begin(), tmp->keys.end(), key) - tmp->keys.begin();
+    if(tmp->children.at(i).get() == child){
+      found = 1;
+    }
+    if(!found) tmp = tmp->children.at(i).get();
+  }
+  return tmp;
 }
 //----------------------------- INSERTION METHODS -----------------------------------//
 //------------------------------- Insert first --------------------------------------//
@@ -58,7 +70,7 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
     while(!current->leaf){ //not a leaf-->children active
       parent = current; //go a level down the tree
       int idx = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
-      current = current->ptrs.children.at(idx);
+      current = current->children.at(idx).get();
     }
     LinkedList l{};
     l.insert(value, method::push_back);
@@ -68,21 +80,21 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
       int i = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
       //insert at the end (to increase the size)
       current->keys.push_back(key);
-      current->ptrs.values.push_back(l);
+      current->values.push_back(l);
       //need to insert at position i
       if(i!=current->keys.size() - 1) {
         for(int j = current->keys.size()-1; j>i; j--) {
           //shifting
           current->keys.at(j) = current->keys.at(j-1);
           //SE BUG PERSISTE PROVA A METTERE =
-          current->ptrs.values.at(j) = std::move(current->ptrs.values.at(j-1));
+          current->values.at(j) = std::move(current->values.at(j-1));
         }
         current->keys.at(i) = key;
-        current->ptrs.values.at(i) = std::move(l);
+        current->values.at(i) = std::move(l);
       }
     } else { //if the leaf is full
       std::vector<Tk> fakeNode(current->keys);
-      std::vector<LinkedList> fakeNodeValues(current->ptrs.values);
+      std::vector<LinkedList> fakeNodeValues(current->values);
       //find "theorical" place for the new key
       int i = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
       //create space
@@ -103,22 +115,23 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
       Node* newLeaf = new Node(true);
 
       //swapping pointers
-      Node* tmp = current->next;
-      current->next = newLeaf;
-      newLeaf->next = tmp;
+      Node* tmp = current->next.get();
+      current->next.release();
+      current->next.reset(newLeaf);
+      newLeaf->next.reset(tmp);
 
       //split the two leaves
       current->keys.resize((branchingFactor)/2 + 1);
-      current->ptrs.values.reserve((branchingFactor)/2 + 1);
+      current->values.reserve((branchingFactor)/2 + 1);
 
       for(int i=0; i<=(branchingFactor)/2; i++){
         current->keys.at(i) = fakeNode.at(i);
-        current->ptrs.values.push_back(fakeNodeValues.at(i));
+        current->values.push_back(fakeNodeValues.at(i));
       }
 
       for(int i=(branchingFactor)/2+1; i<fakeNode.size(); i++) {
         newLeaf->keys.push_back(fakeNode.at(i));
-        newLeaf->ptrs.values.push_back(fakeNodeValues.at(i));
+        newLeaf->values.push_back(fakeNodeValues.at(i));
       }
 
       //if we splitted the root, we need to create a new root
@@ -128,40 +141,48 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
         root.reset(newRoot);
       } else { //we didn't split the root
         //insert new key in the parent
-        insertInternal(newLeaf->keys.at(0), &parent, &newLeaf);
+        insertInternal(newLeaf->keys.at(0), parent, &newLeaf);
       }
     }
   }
 }
 //------------------------------- Insert Internal --------------------------------------//
 template<class Tk, class Tv>
-void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node** parent, typename BPTree<Tk,Tv>::Node** child) {
-  if((*parent)->keys.size()<branchingFactor-1){ //parent is not full
-    int i = std::upper_bound((*parent)->keys.begin(), (*parent)->keys.end(), key) - (*parent)->keys.begin();
+void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node* parent, typename BPTree<Tk,Tv>::Node** child) {
+  if((parent)->keys.size()<branchingFactor-1){ //parent is not full
+    int i = std::upper_bound((parent)->keys.begin(), (parent)->keys.end(), key) - (parent)->keys.begin();
     //make space
-    (*parent)->keys.push_back(key);
-    (*parent)->ptrs.children.push_back(*child);
+    (parent)->keys.push_back(key);
+    (parent)->children.resize((parent)->children.size()+1);
+    (parent)->children.reserve((parent)->children.size()+1);
+    (parent)->children.at((parent)->children.size()-1).reset((*child));
 
-    if(i!=(*parent)->keys.size()-1) {
+    if(i!=(parent)->keys.size()-1) {
       //shifting keys
-      for(int j=(*parent)->keys.size()-1; j>i; j--) {
-        (*parent)->keys.at(j) = (*parent)->keys.at(j-1);
+      for(int j=(parent)->keys.size()-1; j>i; j--) {
+        (parent)->keys.at(j) = (parent)->keys.at(j-1);
       }
       //shifiting pointers
-      for(int j=(*parent)->ptrs.children.size()-1; j>(i+1); j--) {
-        (*parent)->ptrs.children.at(j) = (*parent)->ptrs.children.at(j-1);
+      for(int j=(parent)->children.size()-1; j>(i+1); j--) {
+        (parent)->children.at(j).release();
+        (parent)->children.at(j).reset((parent)->children.at(j-1).release());
       }
       //insert in correct position
-      (*parent)->keys.at(i) = key;
-      (*parent)->ptrs.children.at(i+1) = *child;
+      (parent)->keys.at(i) = key;
+      (parent)->children.at(i+1).release();
+      (parent)->children.at(i+1).reset((*child));
     }
     } else { //we need to split also this node
-      std::vector<Tk> fakeNode((*parent)->keys);
-      std::vector<Node*> fakeNodeChildren((*parent)->ptrs.children);
+      std::vector<Tk> fakeNode((parent)->keys);
+      std::vector<Node*> fakeNodeChildren;
+
+      for(int i=0; i<(parent)->children.size(); i++){
+        fakeNodeChildren.push_back((parent)->children.at(i).get());
+      }
       //find position for the key
-      int i = std::upper_bound((*parent)->keys.begin(), (*parent)->keys.end(), key) - (*parent)->keys.begin();
+      int i = std::upper_bound((parent)->keys.begin(), (parent)->keys.end(), key) - (parent)->keys.begin();
       fakeNode.push_back(key);
-      fakeNodeChildren.push_back(*child);
+      fakeNodeChildren.push_back((*child));
 
       if(i!=fakeNode.size()-1){
         for(int j=fakeNode.size()-1; j>i; j--){
@@ -172,37 +193,55 @@ void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node** parent
         }
         //insert in right position
         fakeNode.at(i) = key;
-        fakeNodeChildren.at(i+1) = *child;
+        fakeNodeChildren.at(i+1) = (*child);
       }
+
       //actual splitting of the node
       int partitionIdx = fakeNode.size()/2;
       Tk partitionKey = fakeNode.at(partitionIdx);
 
+      (parent)->keys.resize(partitionIdx);
+      //(parent)->children.resize(partitionIdx+1);
+      (parent)->children.reserve(partitionIdx + 1);
 
-      (*parent)->keys.resize(partitionIdx);
-      (*parent)->ptrs.children.resize(partitionIdx + 1);
-      (*parent)->ptrs.children.reserve(partitionIdx + 1);
+
       for(int i=0; i<partitionIdx; i++){
-        (*parent)->keys.at(i) = fakeNode.at(i);
+        (parent)->keys.at(i) = fakeNode.at(i);
       }
+
       for(int i=0; i<partitionIdx + 1; i++){
-        (*parent)->ptrs.children.at(i) = fakeNodeChildren.at(i);
+        (parent)->children.at(i).release();
+        (parent)->children.at(i).reset(fakeNodeChildren.at(i));
       }
 
       Node* newNode = new Node(false);
       for(int i=partitionIdx+1; i<fakeNode.size(); i++){
         newNode->keys.push_back(fakeNode.at(i));
       }
-      for(int i=partitionIdx+1; i<fakeNodeChildren.size(); i++){
-        newNode->ptrs.children.push_back(fakeNodeChildren.at(i));
+
+      if((parent)->children.size()>partitionIdx+1){
+        for(int i=partitionIdx+1; i<(parent)->children.size(); i++){
+          (parent)->children.at(i).release();
+          (parent)->children.at(i).reset();
+        }
+        (parent)->children.resize(partitionIdx+1);
       }
-      if((*parent) == root.get()){ //we splitted the root
+
+      newNode->children.resize(fakeNodeChildren.size()-(partitionIdx+1));
+      newNode->children.reserve(fakeNodeChildren.size()-(partitionIdx+1));
+
+      for(int i=0; i<newNode->children.size(); i++){
+        newNode->children.at(i).reset(fakeNodeChildren.at(i+partitionIdx+1));
+      }
+
+
+      if((parent) == root.get()){ //we splitted the root
         root.release();
-        Node* newRoot = new Node(false, partitionKey, *parent, newNode);
+        Node* newRoot = new Node(false, partitionKey, parent, newNode);
         root.reset(newRoot);
       } else { //we splitted an internal node
         //recursive call
-        insertInternal(partitionKey, newNode->findParent(root.get(), *parent), &newNode);
+        insertInternal(partitionKey, findParent(parent), &newNode);
       }
     }
 }
@@ -211,7 +250,7 @@ template<class Tk, class Tv>
 void BPTree<Tk,Tv>::addValue(typename BPTree<Tk,Tv>::Node* leaf, Tk key, Tv value){
   //index corresponding to the key we are searching for
   int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
-  leaf->ptrs.values.at(i).insert(value, method::push_back);
+  leaf->values.at(i).insert(value, method::push_back);
 }
 //--------------------------------- Insert ----------------------------------------//
 template<class Tk, class Tv>
@@ -238,10 +277,9 @@ void BPTree<Tk,Tv>::printLeaves(){
   while(ll){
     for(int i=0; i<ll->keys.size(); i++){
       std::cout<<"["<<ll->keys.at(i)<<"] --> ";
-      std::cout<<"< "<<ll->ptrs.values.at(i)<<">"<<std::endl;
+      std::cout<<"< "<<ll->values.at(i)<<">"<<std::endl;
     }
-    ll = ll->next;
-    //if(ll) std::cout<<"--> ";
+    ll = ll->next.get();
   }
   std::cout<<std::endl;
 }
@@ -259,6 +297,9 @@ void BPTree<Tk,Tv>::printLevels(){
     int size = q.size();
     for(int i=0; i<size; i++){
       Node* u = q.front();
+      if(u==nullptr) {
+        return;
+      }
       q.pop();
 
       for(Tk val : u->keys){
@@ -267,8 +308,9 @@ void BPTree<Tk,Tv>::printLevels(){
       std::cout<<"||";
 
       if(u->leaf!=true){
-        for(Node* v: u->ptrs.children){
-          q.emplace(v);
+        for(auto& v: u->children){
+          Node* w = v.get();
+          q.emplace(w);
         }
       }
     }

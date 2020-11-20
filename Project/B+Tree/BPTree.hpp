@@ -28,12 +28,22 @@ private:
   /** branching factor of the B+Tree */
   int branchingFactor;
   /**
+   *\brief find the parent of the current node
+   *\param current
+   *\param child
+   *
+   *Leaves nodes are ignored (cannot be parent of any other node by definition).
+   *Also parents of the leaves are ignored, this is because this function is called
+   *inside the insertInternal method.
+   */
+  Node* findParent(Node* child);
+  /**
    *\brief auxiliary function to insert a key in an internal node
    *\param key key of the node to be inserted
    *\param parent node in which to insert the key
    *\param child node currently containing key
    */
-  void insertInternal(Tk key, Node** parent, Node** child);
+  void insertInternal(Tk key, Node* parent, Node** child);
   /**
     *\brief function to insert a new key in a leaf node of the B+Tree.
     *\param key key to be inserted

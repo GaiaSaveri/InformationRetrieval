@@ -1,5 +1,5 @@
-#ifndef __DOCUMENT_
-#define __DOCUMENT_
+#ifndef __INDEX_
+#define __INDEX_
 
 #include<utility> //std::pair
 
@@ -68,6 +68,7 @@ struct Index{
   void printDictionary(){
     index.printLevels();
   }
+
 
   /** default destructor */
   ~Index() = default;
