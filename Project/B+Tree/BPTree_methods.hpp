@@ -1,4 +1,5 @@
 #include<iostream>
+#include<fstream>
 #include<vector>
 #include<set>
 #include<memory>
@@ -38,7 +39,7 @@ void BPTree<Tk,Tv>::searchValues(Tk key, typename BPTree<Tk,Tv>::LinkedList& val
     int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
     values = leaf->values.at(i);
   } else{
-    std::cout<<"the key is not in the tree"<<std::endl;
+    std::cout<<"the key "<<key<<" is not in the tree"<<std::endl;
   }
 }
 //--------------------------------- Find parent -------------------------------------//
@@ -263,6 +264,31 @@ void BPTree<Tk,Tv>::insert(Tk key, Tv value){
   else { //the key is not present in the tree
     insertFirst(key, value);
   }
+}
+//------------------------------ WRITE METHODS ------------------------------------//
+template<class Tk, class Tv>
+void BPTree<Tk, Tv>::writeOnFile(){
+  //create the file for terms
+  std::ofstream dictionary("dictionary.txt");
+  //create the file for lists
+  std::ofstream posting_lists("posting_lists.txt");
+
+  if(dictionary.is_open() && posting_lists.is_open()){
+    Node* firstLeaf = root.get()->leftLeaf();
+    while(firstLeaf){
+      for(int i=0; i<firstLeaf->keys.size(); i++){
+        //write on dictionary the key
+        dictionary<<firstLeaf->keys.at(i)<<"\n";
+        //write on posting_lists the values
+        for(auto v : firstLeaf->values.at(i)){
+          posting_lists<<v<<" ";
+        }
+        posting_lists<<"\n";
+      }
+      firstLeaf = firstLeaf->next.get();
+    }
+  }
+  else std::cout<<"unable to open file"<<std::endl;
 }
 //------------------------------ PRINT METHODS ------------------------------------//
 //------------------------------- Print Leaves ------------------------------------//

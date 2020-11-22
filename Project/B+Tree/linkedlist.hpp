@@ -124,6 +124,12 @@ public:
   friend std::ostream& operator<<(std::ostream&, const List<O>&);
 
   /**
+   *\brief destroy the current list
+   */
+  void destroyList(){
+    head.reset();
+  }
+  /**
    *\brief iterator to traverse the linked list.
    */
   template<typename O>
@@ -249,10 +255,12 @@ List<T>::List(const List& l){
 
 template<class T>
 List<T>& List<T>::operator=(const List<T>& l){
-  this->head.release();
-  this->head.reset(l.head.get());
+  head.reset();
+  auto tmp = l;
+  (*this) = std::move(tmp);
   return *this;
 }
+
 
 template<class T>
 void List<T>::intersection(const List& l, List& i){
@@ -305,18 +313,6 @@ void List<T>::union_list(const List& l, List& u){
     tmp2 = tmp2->next.get();
   }
 }
-/**
-template<class T>
-void List<T>::complement(const T value, List& c){
-  auto tmp = this->head.get();
-  T v;
-  while(tmp){
-    v = tmp->value;
-    if(v != value) c.insert(v, method::push_back);
-    tmp = tmp->next.get();
-  }
-}
-*/
 
 template<class T>
 void List<T>::difference(const List& l, List& d){

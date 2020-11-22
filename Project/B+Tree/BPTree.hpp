@@ -8,9 +8,10 @@
 #define __BPTREE_
 
 #include<iostream>
+#include<fstream>
 #include<vector>
 #include<memory>
-#include<algorithm> //std::upper_bound
+#include<algorithm> 
 #include<queue>
 
 #include"node.hpp"
@@ -78,7 +79,13 @@ public:
   int getBF(){
     return branchingFactor;
   }
-
+  /**
+   *\brief write a file containing all the keys in the leaves (one per line),
+   *and another one with the linked lists of values (one linked list for each line).
+   *To i-th line of the file containing the keys corresponds the i-th line containing
+   *the lists.
+   */
+   void writeOnFile();
   /**
    *\brief function to search a key (witnessed in a leaf node).
    *\param key key to be searched
