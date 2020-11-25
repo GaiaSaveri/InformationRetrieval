@@ -282,6 +282,7 @@ void BPTree<Tk, Tv>::writeOnFile(){
         //write on posting_lists the values
         for(auto v : firstLeaf->values.at(i)){
           posting_lists<<v<<" ";
+          //posting_lists.write((char*)&v, sizeof(int));
         }
         posting_lists<<"\n";
       }

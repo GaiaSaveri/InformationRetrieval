@@ -9,23 +9,23 @@
 
 int main(){
 
-  /**
+
   std::vector<std::string> filenames;
 
   Index i{filenames};
 
   i.printInvertedIndex();
-  */
-  std::string dictionary = "dictionary.txt";
-  std::string posting_lists = "posting_lists.txt";
-  Index ii{dictionary, posting_lists};
+
+  //std::string dictionary = "dictionary.txt";
+  //std::string posting_lists = "posting_lists.txt";
+  //Index ii{dictionary, posting_lists};
   //ii.printInvertedIndex();
-  //i.saveIndex();
+  i.saveIndex();
 
-  std::string query = "(maintain AND hold) OR (pct AND year)";
+  //std::string query = "(maintain AND hold) OR (pct AND year)";
 
-   List<int> r = answer(query, ii);
-   std::cout<<"Query result is: "<<r<<std::endl;
+   //List<int> r = answer(query, ii);
+   //std::cout<<"Query result is: "<<r<<std::endl;
 
 
 
