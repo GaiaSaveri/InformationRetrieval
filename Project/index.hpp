@@ -107,29 +107,6 @@ struct Index{
       all.insert(i, method::push_back);
     }
   }
- /**
-  void andQuery(std::string& term1, std::string& term2, LinkedList& result){
-    LinkedList list1{};
-    LinkedList list2{};
-    //list of posintgs associated to term1
-    getPostingList(term1, list1);
-    //list of postings associated to term2
-    getPostingList(term2, list2);
-    //intersection
-    list1.intersection(list2, result);
-  }
-
-  void orQuery(std::string& term1, std::string& term2, LinkedList& result){
-    LinkedList list1{};
-    LinkedList list2{};
-    //list of posintgs associated to term1
-    getPostingList(term1, list1);
-    //list of postings associated to term2
-    getPostingList(term2, list2);
-    //intersection
-    list1.union_list(list2, result);
-  }
-  */
 
   void notQuery(std::string& term1, LinkedList& result){
     LinkedList all{}; //list containing all docID
@@ -141,28 +118,7 @@ struct Index{
     //difference between all and list1
     all.difference(list1, result);
   }
-/*
-  void answerQueryTwoTerms(std::string& term1, std::string& term2, std::string& op, LinkedList& result){
-    if(op.compare("AND") == 0){
-      andQuery(term1, term2, result);
-    }
-    else if(op.compare("OR") == 0){
-      orQuery(term1, term2, result);
-    }
-    else{ //"AND NOT" or "OR NOT"
-      LinkedList list2{};
-      notQuery(term2, list2);
-      LinkedList list1{};
-      getPostingList(term1, list1);
-      if(op.compare("ANDNOT") == 0){
-        list1.intersection(list2, result);
-      }
-      else if(op.compare("ORNOT") == 0){
-        list1.union_list(list2, result);
-      }
-    }
-  }
-*/
+  
   void answerQuery(LinkedList& list1, LinkedList& list2, std::string& op, LinkedList& result){
     if(op.compare("AND") == 0){
       list1.intersection(list2, result);

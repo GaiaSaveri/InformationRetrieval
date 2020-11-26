@@ -1,27 +1,22 @@
-#include"dictionary_compression.hpp"
+#include"CompressedDictionary.hpp"
 #include"B+Tree/linkedlist.hpp"
 
 int main(){
-  std::string dictName = "dictionary.txt";
-  std::string compName = "compressed_dictionary.txt";
+  //std::string dictName = "dictionary.txt";
+  //std::string compName = "compressed_dictionary.txt";
   remove("compressed_dictionary.txt");
-  //starting byte of each block
-  std::vector<int> offsets;
-  int lastBlock;
-  int k = 4;
-  compressDictionary(dictName, compName, 4, offsets, lastBlock);
-  //ptr to the beginning of compressed dictionary
-  unsigned char* cdptr = fileToDisk<unsigned char>(compName);
+  CompressedDictionary d{};
   std::string term = "pct";
-  //int b = findBlock(term, cdptr, offsets);
+  //int b = d.findBlock(term);
   //std::cout<<b<<std::endl;
-  //std::pair<int, int> pair;
-  //int t = findTerm(term, cdptr, offsets, pair, 4, lastBlock);
-  //std::cout<<"found? "<< t <<std::endl;
-  //std::cout<<pair.first<<" "<<pair.second<<std::endl;
+  std::pair<int, int> pair;
+  int t = d.findTerm(term, pair);
+  std::cout<<"found? "<< t <<std::endl;
+  std::cout<<pair.first<<" "<<pair.second<<std::endl;
+  //for(auto x : d.offsets) std::cout<<x<<std::endl;
   //line is ((first*k)+second)+1
   //-----------------QUI HO COMPRESSO E TROVATO IL TERM-----------------------//
-
+  /**
   std::string postName = "posting_lists.txt";
   char* plptr = fileToDisk<char>(postName);
   std::vector<std::vector<int>> postingOffsets;
