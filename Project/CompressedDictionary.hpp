@@ -12,7 +12,7 @@ struct CompressedDictionary{
   int k;
   /** last block size */
   int lastBlock;
-  /** pointers to starting byte of each block */
+  /** number of bytes before the starting byte of each block */ //-----> Compressed Dict
   std::vector<int> offsets;
   /** pointer to the beginning of compressed dictionary */
   unsigned char* cdptr;
@@ -22,14 +22,14 @@ struct CompressedDictionary{
     dictName = "dictionary.txt";
     compName = "compressed_dictionary.txt";
     k = 4;
-    compressDictionary();
+    compressDictionary(); //MAGARI METTERE UN IF SE IL FILE E' GIA' PRESENTE
     cdptr = fileToDisk<unsigned char>(compName);
   }
 
   /** read a block of uncompressed terms */
   void readBlockUncompressed(char* &dptr, int k, std::vector<std::string>& termBlock);
   /** front coding of the block */
-  void frontCodingBlock(int& currentOffset, std::vector<std::string>& block);
+  void frontCodingBlock(int& currentOffset, std::vector<std::string>& block, std::ofstream& file);
   /** compress the whole dictionary */
   void compressDictionary();
 

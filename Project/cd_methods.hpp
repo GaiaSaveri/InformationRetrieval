@@ -1,9 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<vector>
-#include<sys/stat.h>
 #include<sys/mman.h>
-#include<fcntl.h>
 #include<cmath>
 #include<utility>
 
@@ -26,8 +24,7 @@ void CompressedDictionary::readBlockUncompressed(char* &dptr, int k, std::vector
 }
 
 //compress a block of terms using front coding
-void CompressedDictionary::frontCodingBlock(int& currentOffset, std::vector<std::string>& block){
-  std::ofstream file (compName, std::ios::binary | std::ofstream::app);
+void CompressedDictionary::frontCodingBlock(int& currentOffset, std::vector<std::string>& block, std::ofstream& file){
   //write first term as it is, along with its length
   unsigned char length = block.at(0).length();
   file.write((const char*)&length, sizeof(unsigned char));
@@ -62,10 +59,11 @@ void CompressedDictionary::frontCodingBlock(int& currentOffset, std::vector<std:
 
 //compress the whole dictionary
 void CompressedDictionary::compressDictionary(){
+  std::ofstream file (compName, std::ios::binary | std::ofstream::app);
   //compute number of terms
   int terms = countLinesFile(dictName);
   //compute number of blocks
-  int blocks = ceil(terms/k);
+  int blocks = terms/k + ((terms%k==0)? 0 : 1);
   offsets.resize(blocks);
   offsets.at(0)=0;
   //mmap dictionary
@@ -76,7 +74,7 @@ void CompressedDictionary::compressDictionary(){
     int currentOffset = 0;
     if(i!=blocks-1){ //we have exactly k terms per block
       readBlockUncompressed(dptr, k, termBlock);
-      frontCodingBlock(currentOffset, termBlock);
+      frontCodingBlock(currentOffset, termBlock, file);
       offsets.at(i+1) = currentOffset;
     }
     else{ //last block may have < k terms
@@ -89,7 +87,7 @@ void CompressedDictionary::compressDictionary(){
         lastBlock = n;
         readBlockUncompressed(dptr, n, termBlock);
       }
-      frontCodingBlock(currentOffset, termBlock);
+      frontCodingBlock(currentOffset, termBlock, file);
     }
     termBlock.clear();
   }
@@ -97,6 +95,7 @@ void CompressedDictionary::compressDictionary(){
   for(int i=1; i<offsets.size(); i++){
     offsets.at(i) += offsets.at(i-1);
   }
+  file.close();
 }
 
 //------------------------------- FIND METHODS -------------------------------//

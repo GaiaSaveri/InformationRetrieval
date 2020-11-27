@@ -55,13 +55,13 @@ struct Index{
   /** custom constructor */
   Index(std::vector<std::string>& filenames){
     readFolder(filenames);
-    for(int i=0; i<3; i++){
+    for(int i=0; i<filenames.size(); i++){
       Document d{i, filenames.at(i)};
       for(int j=0; j<d.doc.second.size(); j++)
         index.insert(d.doc.second.at(j), i);
-      maxDocID = i; //DA RIMUOVERE
+      //maxDocID = i; //DA RIMUOVERE
     }
-    //maxDocID = filenames.size();
+    maxDocID = filenames.size()-1;
   }
   /** custom constructor */
   Index(std::string& dictionary, std::string& posting_lists){
@@ -118,7 +118,7 @@ struct Index{
     //difference between all and list1
     all.difference(list1, result);
   }
-  
+
   void answerQuery(LinkedList& list1, LinkedList& list2, std::string& op, LinkedList& result){
     if(op.compare("AND") == 0){
       list1.intersection(list2, result);
