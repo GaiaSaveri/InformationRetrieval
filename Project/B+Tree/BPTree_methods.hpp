@@ -269,9 +269,9 @@ void BPTree<Tk,Tv>::insert(Tk key, Tv value){
 template<class Tk, class Tv>
 void BPTree<Tk, Tv>::writeOnFile(){
   //create the file for terms
-  std::ofstream dictionary("dictionary.txt");
+  std::ofstream dictionary("files/dictionary.txt");
   //create the file for lists
-  std::ofstream posting_lists("posting_lists.txt");
+  std::ofstream posting_lists("files/posting_lists.txt");
 
   if(dictionary.is_open() && posting_lists.is_open()){
     Node* firstLeaf = root.get()->leftLeaf();

@@ -11,12 +11,7 @@
 void CompressedDictionary::readBlockUncompressed(char* &dptr, int k, std::vector<std::string>& termBlock){
   for(int i=0; i<k; i++){
     std::string term = "";
-    //read a term
-    int j = 0;
-    while(dptr[j]!='\n'){
-      term.push_back(dptr[j]);
-      j++;
-    }
+    Dictionary::readTerm(term, dptr);
     //adjust ptr to file on disk
     dptr = &dptr[term.size()+1];
     termBlock.push_back(term);
@@ -60,14 +55,10 @@ void CompressedDictionary::frontCodingBlock(int& currentOffset, std::vector<std:
 //compress the whole dictionary
 void CompressedDictionary::compressDictionary(){
   std::ofstream file (compName, std::ios::binary | std::ofstream::app);
-  //compute number of terms
-  int terms = countLinesFile(dictName);
   //compute number of blocks
   int blocks = terms/k + ((terms%k==0)? 0 : 1);
   offsets.resize(blocks);
   offsets.at(0)=0;
-  //mmap dictionary
-  char* dptr = fileToDisk<char>(dictName);
   std::vector<std::string> termBlock;
   //read and compress every block
   for(int i=0; i<blocks; i++){
@@ -173,7 +164,7 @@ void CompressedDictionary::readBlockCompressed(unsigned char* &cdptr, int k, std
 }
 
 //find the term (if present) inside the compressed dictionary
-int CompressedDictionary::findTerm(std::string& term, std::pair<int,int>& pair){
+int CompressedDictionary::findTerm(std::string& term, int& index){
   int b = findBlock(term);
   if(b==-1) return b; //unsuccessful binary search
   else { //term present
@@ -192,7 +183,7 @@ int CompressedDictionary::findTerm(std::string& term, std::pair<int,int>& pair){
     }
     if(!found) return -1; //term not found
     else{
-      pair = std::make_pair(b, i);
+      index = b*termBlock.size() + i;
       return 1;
     }
   }

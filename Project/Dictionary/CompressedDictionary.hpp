@@ -1,26 +1,26 @@
 #ifndef __COMPRESSEDDICTIONARY_
 #define __COMPRESSEDDICTIONARY_
 
-#include"dictionary_compression.hpp"
+#include"../file_utils.hpp"
+#include"Dictionary.hpp"
 
-struct CompressedDictionary{
+struct CompressedDictionary : public Dictionary{
   /** name of the file containing the uncompressed dictionary */
-  std::string dictName;
+  //std::string dictName;
   /** name of the file containing the compressed dictionary */
   std::string compName;
   /** block size */
   int k;
   /** last block size */
   int lastBlock;
-  /** number of bytes before the starting byte of each block */ //-----> Compressed Dict
+  /** number of bytes before the starting byte of each block (in the compressed dictionary) */
   std::vector<int> offsets;
   /** pointer to the beginning of compressed dictionary */
   unsigned char* cdptr;
 
   /** default constructor */
-  CompressedDictionary(){
-    dictName = "dictionary.txt";
-    compName = "compressed_dictionary.txt";
+  CompressedDictionary() : Dictionary{} {
+    compName = "files/compressed_dictionary.txt";
     k = 4;
     compressDictionary(); //MAGARI METTERE UN IF SE IL FILE E' GIA' PRESENTE
     cdptr = fileToDisk<unsigned char>(compName);
@@ -40,7 +40,7 @@ struct CompressedDictionary{
   /** read a block of compressed terms */
   void readBlockCompressed(unsigned char* &cdptr, int k, std::vector<std::string>& termBlock);
   /** find a term inside the compressed dictionary */
-  int findTerm(std::string& term, std::pair<int,int>& pair);
+  int findTerm(std::string& term, int& index) override;
 
   /** destructor */
   ~CompressedDictionary() = default;

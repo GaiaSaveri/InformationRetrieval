@@ -14,18 +14,18 @@ int main(){
 
   Index i{filenames};
 
-  i.printInvertedIndex();
+  //i.printInvertedIndex();
 
-  //std::string dictionary = "dictionary.txt";
-  //std::string posting_lists = "posting_lists.txt";
+  //std::string dictionary = "files/dictionary.txt";
+  //std::string posting_lists = "files/posting_lists.txt";
   //Index ii{dictionary, posting_lists};
   //ii.printInvertedIndex();
   i.saveIndex();
 
-  //std::string query = "(maintain AND hold) OR (pct AND year)";
+  std::string query = "maintain AND hold";
 
-   //List<int> r = answer(query, ii);
-   //std::cout<<"Query result is: "<<r<<std::endl;
+   List<int> r = answer(query, i);
+   std::cout<<"Query result is: "<<r<<std::endl;
 
 
 

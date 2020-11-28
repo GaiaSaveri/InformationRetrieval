@@ -5,27 +5,9 @@
 #include<cmath>
 #include<utility>
 
-//offsets to the beginning of each line in the uncompressed file
-void CompressedPostings::setOffsets(){
-  int l = countLinesFile(postName);
-  auto ptr = plptr;
-  postOffsets.resize(l);
-  postOffsets.at(0) = 0;
-  for(int i=0; i<postOffsets.size()-1; i++){
-    int k = 0;
-    while(ptr[k]!='\n'){
-      k++;
-    }
-    postOffsets.at(i+1) = k+1;
-    ptr = &ptr[k+1];
-  }
-  //prefix sum of the offsets
-  for(int i=1; i<postOffsets.size(); i++)
-    postOffsets.at(i) += postOffsets.at(i-1);
-}
-
 //--------------------------- COMPRESSION METHODS ----------------------------//
 
+/**
 //read a posting list from the uncompressed file
 void CompressedPostings::readPostingUncompressed(char* &ptr, List<int>& postings){
   int i = 0;
@@ -36,6 +18,7 @@ void CompressedPostings::readPostingUncompressed(char* &ptr, List<int>& postings
     i++;
   }
 }
+*/
 
 //compute the gaps in the posting list entries
 void CompressedPostings::computeGaps(List<int>& l, std::vector<int>& gaps){
@@ -76,7 +59,7 @@ void CompressedPostings::compressPostings(){
     auto ptr = plptr + postOffsets.at(i);
     //read into list
     List<int> l{};
-    readPostingUncompressed(ptr, l);
+    Postings::readPostingUncompressed(ptr, l);
     //compute gaps
     std::vector<int> gaps;
     computeGaps(l, gaps);

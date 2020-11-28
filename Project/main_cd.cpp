@@ -1,20 +1,19 @@
-#include"CompressedDictionary.hpp"
+#include"Dictionary/CompressedDictionary.hpp"
 #include"B+Tree/linkedlist.hpp"
 
 #include<typeinfo>
 
 int main(){
-  //std::string dictName = "dictionary.txt";
-  //std::string compName = "compressed_dictionary.txt";
-  remove("compressed_dictionary.txt");
+  remove("files/compressed_dictionary.txt");
   CompressedDictionary d{};
-  std::string term = "year";
+  std::string term = "acceler";
   //int b = d.findBlock(term);
   //std::cout<<b<<std::endl;
-  std::pair<int, int> pair;
-  int t = d.findTerm(term, pair);
+  //std::pair<int, int> pair;
+  int index;
+  int t = d.findTerm(term, index);
   std::cout<<"found? "<< t <<std::endl;
-  std::cout<<pair.first<<" "<<pair.second<<std::endl;
+  std::cout<<index<<std::endl;
 
   //std::string c =  typeid(d).name();
   //std::cout<<c<<std::endl;
