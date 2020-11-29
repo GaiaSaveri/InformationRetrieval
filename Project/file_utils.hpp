@@ -1,24 +1,47 @@
-#ifndef __DICTIONARY_COMPRESSION_
-#define __DICTIONARY_COMPRESSION_
+#ifndef __FILE_UTILS_
+#define __FILE_UTILS_
 
 #include<iostream>
 #include<fstream>
 #include<vector>
 #include<sys/stat.h>
 #include<sys/mman.h>
+#include<sys/types.h>
+#include<dirent.h>
 #include<fcntl.h>
 #include<cmath>
+#include<cstring>
 #include<utility>
-
-#include"B+Tree/linkedlist.hpp"
-
-//---------------------------------------FILE UTILS-----------------------------------//
 
 //get size of the file (in bytes) containing the dict
 int getFileSize(std::string& filename){
   struct stat buf;
   int s = stat(filename.c_str(), &buf);
   return s == 0? buf.st_size : -1;
+}
+
+//check if a file exists (assuming exists <-> accessible)
+bool exists(std::string& filename){
+  std::ifstream file(filename);
+  return file.good();
+}
+
+//reverse content of a vector into a file
+void vectorToFile(std::string& filename, std::vector<int>& v){
+  std::ofstream file(filename);
+  for(int i=0; i<v.size(); i++){
+    file << v.at(i) << "\n";
+  }
+  file.close();
+}
+
+//reverse content of a file into a vector
+void fileToVector(std::string& filename, std::vector<int>& v){
+  std::ifstream file(filename);
+  int value;
+  while(file>>value)
+    v.push_back(value);
+  file.close();
 }
 
 //mmap file to disk
@@ -42,68 +65,21 @@ int countLinesFile(std::string& filename){
   return lines;
 }
 
-//---------------------------------------------------------------------------------------//
-
-//---------------------------CONNECT COMPRESSED DICT TO LISTS-------------------------------//
-/**
-void setPostingOffsets(char* &plptr, std::vector<std::vector<int>>& postingOffsets, std::vector<int>& offsets, int k, int lastBlock){
-  //adjust dimensions of postings offsets
-  postingOffsets.resize(offsets.size());
-  for(int i=0; i<postingOffsets.size(); i++){
-    postingOffsets.at(i).resize(k);
-    if(k!=lastBlock && i==postingOffsets.size()-1) postingOffsets.at(i).resize(lastBlock);
-  }
-  auto ptr = plptr;
-  for(int i=0; i<postingOffsets.size(); i++){
-    for(int j=0; j<postingOffsets.at(i).size(); j++){
-      int k = 0;
-      while(ptr[k]!='\n'){
-        k++;
-      }
-    if(j==postingOffsets.at(i).size()-1){
-      if(i!=postingOffsets.size()-1)
-        postingOffsets.at(i+1).at(0) = k+1;
-    }
-    else postingOffsets.at(i).at(j+1) = k+1;
-    ptr = &ptr[k+1];
-  }
-  }
-  //prefix sum offset
-  int cumulative = 0;
-  for(int i=0; i<postingOffsets.size(); i++){
-    postingOffsets.at(i).at(0) += cumulative;
-    for(int j=1; j<postingOffsets.at(i).size(); j++){
-      postingOffsets.at(i).at(j) += postingOffsets.at(i).at(j-1);
-    }
-    cumulative = postingOffsets.at(i).back();
-  }
-}
-
-
-void readPosting(char* &ptr, List<int>& postings){
+//count total number of files in a directory
+int countFiles(std::string& dirname){
+  DIR *dp;
   int i = 0;
-  while(ptr[i]!='\n'){
-    if(ptr[i]!=' ') {
-      postings.insert(ptr[i]-'0', method::push_back);
+  struct dirent *d;
+  dp = opendir(dirname.c_str());
+  if(dp!=nullptr){
+    while(d = readdir(dp)){
+      if(strcmp(d->d_name,".")!=0 && strcmp(d->d_name,"..")!=0)
+        i++;
     }
-    i++;
+    (void)closedir(dp);
   }
+  else std::cout<<"directory not opened"<<std::endl;
+  return i;
 }
 
-void findPostings(std::string& term, unsigned char* &cdptr, std::vector<int>& offsets,
-                  int k, int lastBlock, char* &plptr, std::vector<std::vector<int>>& postingOffsets,
-                  List<int>& postings){
-  //binary search throughout all the blocks
-  int b = findBlock(term, cdptr, offsets);
-  std::pair<int, int> pair;
-  //linear scan the theoretically right block
-  int t = findTerm(term, cdptr, offsets, pair, k, lastBlock);
-  if(t==-1) std::cout<<"term not found"<<std::endl;
-  //read the posting list file at right position
-  else { //term is in dictionary
-    char* postOffset = plptr + postingOffsets.at(pair.first).at(pair.second);
-    readPosting(postOffset, postings);
-  }
-}
-*/
 #endif

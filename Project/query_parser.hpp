@@ -1,17 +1,45 @@
-#ifndef __QUERY_PARSER_
-#define __QUERY_PARSER_
-
 #include<regex>
 
-#include"index.hpp"
-void findParenthesis(std::vector<std::string>& tokens, std::vector<int>& parenthesis, std::string& p){
+#include"document_utils.hpp"
+
+//----------------------------- PREPROCESS QUERY -----------------------------//
+
+//perform normalization and stemming in the terms appearing in the query
+template<typename IRS>
+void QueryParser<IRS>::preprocessTokens(std::vector<std::string>& tokens){
+  std::vector<std::string> terms;
+  std::vector<int> ind;
+  //all symbols in the tokenized query that are not terms
+  std::vector<std::string> special;
+  //parenthesis
+  special.push_back("(");
+  special.push_back(")");
+  //boolean operators
+  special.push_back("AND");
+  special.push_back("OR");
+  special.push_back("NOT");
+  special.push_back("ANDNOT");
+  special.push_back("ORNOT");
   for(int i=0; i<tokens.size(); i++){
-    if(tokens.at(i).compare(p)==0) parenthesis.push_back(i);
+    if(std::find(special.begin(), special.end(), tokens.at(i)) == special.end()){
+      //current token is a term
+      terms.push_back(tokens.at(i));
+      ind.push_back(i);
+    }
+  }
+  //normalize terms
+  normalize(terms); //QUESTO E' DEL DOCUMENT UTILS!!!!!!!!!!!!
+  //perform stemming on terms
+  stemming(terms); //QUESTO E' DEL DOCUMENT UTILS!!!!!!!!!!!!
+  //back to tokenized query, in the right positions given  by ind
+  for(int i=0; i<terms.size(); i++){
+    tokens.at(ind.at(i)) == terms.at(i);
   }
 }
 
-//split query in tokens
-void queryToTokens(std::string& query, std::vector<std::string>& tokens){
+//split query in tokens and preprocess tokens
+template<typename IRS>
+void QueryParser<IRS>::queryToTokens(std::vector<std::string>& tokens){
   std::string token;
   size_t pos = 0;
   std::string delimiter = " ";
@@ -26,25 +54,74 @@ void queryToTokens(std::string& query, std::vector<std::string>& tokens){
   }
   //push what remains
   tokens.push_back(query);
+  preprocessTokens(tokens);
 }
 
-void answerSimpleQuery(std::vector<std::string>& tokens, List<int>& result, Index& ii){
-  List<int> tmp1{}; //partial result
+//------------------------- ANSWER INDEPENDENT QUERY -------------------------//
+
+template<typename IRS>
+void QueryParser<IRS>::notQuery(std::string& term1, typename QueryParser<IRS>::LinkedList& result, typename QueryParser<IRS>::IR& ir){
+  LinkedList all{}; //list containing all docID
+  LinkedList list1{};
+  //list of posintgs associated to term1
+  ir.invertedIndex.getPostingList(term1, list1); //QUESTO E' DELL'INDEX!!!!!!!!!!!!
+  //populate all
+  ir.generateAllList(all); //QUESTO E' DELL'IR!!!!!!!!!!!!
+  //difference between all and list1
+  all.difference(list1, result);
+}
+
+template<typename IRS>
+void QueryParser<IRS>::answerQuery(typename QueryParser<IRS>::LinkedList& list1, typename QueryParser<IRS>::LinkedList& list2, std::string& op,
+                                   typename QueryParser<IRS>::LinkedList& result, typename QueryParser<IRS>::IR& ir){
+  if(op.compare("AND") == 0){
+    list1.intersection(list2, result);
+  }
+  else if(op.compare("OR") == 0){
+    list1.union_list(list2, result);
+  }
+  else { //"AND NOT" or "OR NOT"
+    LinkedList all{};
+    ir.generateAllList(all); //QUESTO E' DELL'IR!!!!!!!!!!!!
+    LinkedList diff{};
+    all.difference(list2, diff);
+    if(op.compare("ANDNOT") == 0){
+      list1.intersection(diff, result);
+    }
+    else if(op.compare("ORNOT") == 0){
+      list1.union_list(diff, result);
+    }
+  }
+}
+
+template<typename IRS>
+void QueryParser<IRS>::answerSimpleQuery(std::vector<std::string>& tokens, typename QueryParser<IRS>::LinkedList& result, typename QueryParser<IRS>::IR& ir){
+  LinkedList tmp1{}; //partial result
   int start = 1;
   if(tokens.at(0).compare("NOT")==0) {
     start = 2;
-    ii.notQuery(tokens.at(1), result);
+    notQuery(tokens.at(1), result, ir);
   }
-  else ii.getPostingList(tokens.at(0), result);
+  else ir.invertedIndex.getPostingList(tokens.at(0), result); //QUESTO E' DELL'INDEX !!!!!
   for(int i=start; i<tokens.size(); i+=2){
-    List<int> tmp2{}; //list of the current term
-    ii.getPostingList(tokens.at(i+1), tmp2);
-    ii.answerQuery(result, tmp2, tokens.at(i), tmp1);
+    LinkedList tmp2{}; //list of the current term
+    ir.invertedIndex.getPostingList(tokens.at(i+1), tmp2); //QUESTO E' DELL'INDEX !!!!!
+    answerQuery(result, tmp2, tokens.at(i), tmp1, ir);
     result = std::move(tmp1);
   }
 }
 
-void parseTotalQuery(std::string& query, std::vector<std::string>& tokens, std::vector<std::pair<int,int>>& subexpr){
+//-------------------------- PARSE NESTED QUERIES ----------------------------//
+
+template<typename IRS>
+void QueryParser<IRS>::findParenthesis(std::vector<std::string>& tokens, std::vector<int>& parenthesis, std::string& p){
+  for(int i=0; i<tokens.size(); i++){
+    if(tokens.at(i).compare(p)==0) parenthesis.push_back(i);
+  }
+}
+
+template<typename IRS>
+void QueryParser<IRS>::parseTotalQuery(std::vector<std::string>& tokens, std::vector<std::pair<int,int>>& subexpr){
   //query must be enclosed in () for the whole parsing machinery to work
   std::string o = "(";
   std::string c =")";
@@ -54,7 +131,7 @@ void parseTotalQuery(std::string& query, std::vector<std::string>& tokens, std::
   query = std::regex_replace(query, std::regex("\\( |\\("), "\( ");
   query = std::regex_replace(query, std::regex(" \\)|\\)"), " )" );
   //from query to set of tokens, i.e. split when find a space
-  queryToTokens(query, tokens);
+  queryToTokens(tokens);
   std::vector<int> open;
   std::vector<int> close;
   //find parentesis' index (open and close parenthesis respectively)
@@ -76,9 +153,10 @@ void parseTotalQuery(std::string& query, std::vector<std::string>& tokens, std::
 }
 
 //get posting list of terms corresponding to escape characters
-void getListFromEscapeCharacter(std::string& currentTerm, std::vector<std::string>& currentQuery,
-                                std::vector<List<int>>& subexprResults, std::vector<List<int>>& cList,
-                                List<int>& result, Index& ii){
+template<typename IRS>
+void QueryParser<IRS>::getListFromEscapeCharacter(std::string& currentTerm, std::vector<std::string>& currentQuery,
+                                std::vector<typename QueryParser<IRS>::LinkedList>& subexprResults, std::vector<typename QueryParser<IRS>::LinkedList>& cList,
+                                typename QueryParser<IRS>::LinkedList& result, typename QueryParser<IRS>::IR& ir){
   std::string subExprEscape = "#";
   std::string cListEscape = "%";
   if(currentTerm.find(subExprEscape) != std::string::npos){
@@ -96,7 +174,6 @@ void getListFromEscapeCharacter(std::string& currentTerm, std::vector<std::strin
       }
       if(!found) i++;
     }
-    std::cout<<"found "<<i<<std::endl;
     result = subexprResults.at(i);
   }
   else if(currentTerm.find(cListEscape) != std::string::npos){
@@ -113,12 +190,13 @@ void getListFromEscapeCharacter(std::string& currentTerm, std::vector<std::strin
     }
     result = cList.at(i);
   }
-  else ii.getPostingList(currentTerm, result);
+  else ir.invertedIndex.getPostingList(currentTerm, result); //QUESTO E' DELL'INDEX !!!!!
 }
 
 //answer a query that depends on other subexpression
-void parsePartialQuery(std::vector<std::string>& currentQuery, std::vector<List<int>>& subexprResults,
-                       List<int>& result, std::vector<List<int>>& cList, Index& ii){
+template<typename IRS>
+void QueryParser<IRS>::parsePartialQuery(std::vector<std::string>& currentQuery, std::vector<typename QueryParser<IRS>::LinkedList>& subexprResults,
+                       typename QueryParser<IRS>::LinkedList& result, std::vector<typename QueryParser<IRS>::LinkedList>& cList, typename QueryParser<IRS>::IR& ir){
   //remove parenthesis
   currentQuery.erase(std::remove_if(currentQuery.begin(), currentQuery.end(),
     [](std::string s){return (s=="(" || s == ")");}), currentQuery.end());
@@ -131,8 +209,8 @@ void parsePartialQuery(std::vector<std::string>& currentQuery, std::vector<List<
     //if current query is a term
     if(currentQuery.at(i).compare("AND")!=0 && currentQuery.at(i).compare("OR")!=0 && currentQuery.at(i).compare("NOT")!=0){
       //retrieve its posting list
-      List<int> currentList{};
-      ii.getPostingList(currentQuery.at(i), currentList);
+      LinkedList currentList{};
+      ir.invertedIndex.getPostingList(currentQuery.at(i), currentList); //QUESTO E' DELL'INDEX !!!!!
       cList.push_back(currentList);
       currentQuery.at(i) = currentEscapeTerm;
     }
@@ -145,33 +223,31 @@ void parsePartialQuery(std::vector<std::string>& currentQuery, std::vector<List<
       } } }
   }
   //answer query
-  List<int> tmp1{}; //temporary result
+  LinkedList tmp1{}; //temporary result
   int start = 1;
   if(currentQuery.at(0).compare("NOT")==0) {
     start = 2;
-    ii.notQuery(currentQuery.at(1), result);
+    notQuery(currentQuery.at(1), result, ir);
   }
   //handle escape characters
-  else getListFromEscapeCharacter(currentQuery.at(0), currentQuery, subexprResults, cList, result, ii);
-  std::cout<<"first "<<result<<std::endl;
+  else getListFromEscapeCharacter(currentQuery.at(0), currentQuery, subexprResults, cList, result, ir);
   for(int i=start; i<currentQuery.size(); i+=2){
-    List<int> tmp2{}; //posting list of the current term
+    LinkedList tmp2{}; //posting list of the current term
     //handle escape characters
-    getListFromEscapeCharacter(currentQuery.at(i+1), currentQuery, subexprResults, cList, tmp2, ii);
-    std::cout<<"second: "<<tmp2<<std::endl;
-    std::cout<<"operator "<<currentQuery.at(0)<<std::endl;
-    ii.answerQuery(result, tmp2, currentQuery.at(i), tmp1);
+    getListFromEscapeCharacter(currentQuery.at(i+1), currentQuery, subexprResults, cList, tmp2, ir);
+    answerQuery(result, tmp2, currentQuery.at(i), tmp1, ir);
     result = std::move(tmp1);
   }
 }
 
-List<int> answer(std::string& query, Index& ii){
+//--------------------------- ANSWER GENERIC QUERY ---------------------------//
+
+template<typename IRS>
+typename QueryParser<IRS>::LinkedList QueryParser<IRS>::answer(typename QueryParser<IRS>::IR& ir){
   std::vector<std::string> tokens;
   std::vector<std::pair<int,int>> subexpr;
-  parseTotalQuery(query, tokens, subexpr);
-
-  std::vector<List<int>> subexprResults;
-
+  parseTotalQuery(tokens, subexpr);
+  std::vector<LinkedList> subexprResults;
   for(auto x : subexpr){
     //escape symbol to detect queries that depends on other subqueries
     std::string escape = "#";
@@ -180,16 +256,11 @@ List<int> answer(std::string& query, Index& ii){
     //query to answer at current stage
     std::vector<std::string> currentQuery;
     //in subexpr we have [i,j], actual token in tokens are [i+1, j-1]
-    std::cout<<"currently processing ["<<x.first+1<<","<<x.second-1<<"]"<<std::endl;
     for(int i=x.first+1; i<x.second; i++){
       //compute terms in current query
       currentQuery.push_back(tokens.at(i));
       tokens.at(i) = currentEscape;
     }
-    std::cout<<"Processing query: "<<std::endl;
-    for(auto x : currentQuery) std::cout<<x<<" ";
-    std::cout<<std::endl;
-      //List<int> result{};
       //detect if it is an "independent" query or depends on partial results
       bool dependent = false;
       int i = 0;
@@ -199,24 +270,16 @@ List<int> answer(std::string& query, Index& ii){
           }
         i++;
       }
-      List<int> result{};
+      LinkedList result{};
       if(dependent){
-        std::cout<<"answering dependent query"<<std::endl;
-        std::vector<List<int>> cList{};
-        parsePartialQuery(currentQuery, subexprResults, result, cList, ii);
-        std::cout<<"Result is: "<<result<<std::endl;
-        std::cout<<std::endl;
+        std::vector<LinkedList> cList{};
+        parsePartialQuery(currentQuery, subexprResults, result, cList, ir);
         subexprResults.push_back(result);
       }
       else if(!dependent){ //parse and resolve
-        std::cout<<"answering simple query"<<std::endl;
-        answerSimpleQuery(currentQuery, result, ii);
-        std::cout<<"Result is "<<result<<std::endl;
-        std::cout<<std::endl;
+        answerSimpleQuery(currentQuery, result, ir);
         subexprResults.push_back(result);
-        //std::cout<<"partial result: "<<subexprResults.back()<<std::endl;
       }
     }
     return subexprResults.back();
 }
-#endif

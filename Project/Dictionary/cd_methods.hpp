@@ -183,7 +183,7 @@ int CompressedDictionary::findTerm(std::string& term, int& index){
     }
     if(!found) return -1; //term not found
     else{
-      index = b*termBlock.size() + i;
+      index = b*k + i;
       return 1;
     }
   }

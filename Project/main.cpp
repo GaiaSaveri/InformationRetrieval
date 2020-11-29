@@ -1,18 +1,28 @@
 #include"FileIndex.hpp"
-#include"CompressedDictionary.hpp"
-#include"CompressedPostings.hpp"
+#include"TreeIndex.hpp"
+#include"Dictionary/CompressedDictionary.hpp"
+#include"PostingLists/CompressedPostings.hpp"
+#include"IRSystem.hpp"
+#include"file_utils.hpp"
+#include"QueryParser.hpp"
 
 int main(){
-  //FileIndex<CompressedDictionary, CompressedPostings> index{};
-  //Dictionary d{};
-  //std::string term = "virtual";
-  //int index;
-  //int found = d.findTerm(term, index);
-  //std::cout<<"found? "<<found<<std::endl;
-  //std::cout<<index<<std::endl;
-  //for(int i=0; i<10; i++) std::cout<<d.dicOffsets.at(i)<<std::endl;
-  Postings p{};
-  List<int> post;
-  p.findPostingList(582, post);
-  std::cout<<post<<std::endl;
+  /**
+  FileIndex<CompressedDictionary, CompressedPostings> index{};
+  std::string term = "acceler";
+  List<int> postings;
+  index.getPostingList(term, postings);
+  std::cout<<postings<<std::endl;
+  */
+  //std::string dirname = "data/small/";
+  //int i = countFiles(dirname);
+  //std::cout<<i<<std::endl;
+  IRSystem<TreeIndex> ir{};
+  //List<int> p;
+  //std::string q = "maintain";
+  //ir.invertedIndex.getPostingList(q, p);
+  //std::cout<<p<<std::endl;
+  std::string query = "pct OR (maintain AND hold)";
+  List<int> result = ir.answer_query(query);
+  std::cout<<result<<std::endl;
 }

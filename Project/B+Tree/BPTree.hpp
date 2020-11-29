@@ -11,7 +11,7 @@
 #include<fstream>
 #include<vector>
 #include<memory>
-#include<algorithm> 
+#include<algorithm>
 #include<queue>
 
 #include"node.hpp"
@@ -107,9 +107,8 @@ public:
    *If the key is not present, it adds the key-value pair in the B+Tree.
    */
   void insert(Tk key, Tv value);
-
-  //MANCANO TUTTI I REMOVE!
-
+  
+#ifdef DEBUG
   /**
    *\brief function to print the keys at the leaves' level.
    */
@@ -120,18 +119,11 @@ public:
    */
   void printLevels();
 
-  /**
-   *\brief function to clear the content of the tree.
-   *
-   *This function resets the root of the tree, so that the whole B+Tree is destroyed
-   *without any memory leak.
-   */
-  void clear() noexcept {
-     root.reset();
-  }
-
+#endif
   /** destructor for the B+Tree */
-  ~BPTree() = default;
+  ~BPTree(){
+    root.reset();
+  };
 
 };
 

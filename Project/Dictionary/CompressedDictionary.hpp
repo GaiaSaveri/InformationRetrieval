@@ -5,8 +5,6 @@
 #include"Dictionary.hpp"
 
 struct CompressedDictionary : public Dictionary{
-  /** name of the file containing the uncompressed dictionary */
-  //std::string dictName;
   /** name of the file containing the compressed dictionary */
   std::string compName;
   /** block size */
@@ -21,8 +19,16 @@ struct CompressedDictionary : public Dictionary{
   /** default constructor */
   CompressedDictionary() : Dictionary{} {
     compName = "files/compressed_dictionary.txt";
+    std::string offFile = "files/compressed_dict_offsets";
     k = 4;
-    compressDictionary(); //MAGARI METTERE UN IF SE IL FILE E' GIA' PRESENTE
+    if(exists(compName) && exists(offFile)){ //compress dictionary already exists
+      fileToVector(offFile, offsets);
+      lastBlock = (terms%k == 0)? k : terms%k;
+    }
+    else{
+      compressDictionary();
+      vectorToFile(offFile, offsets);
+    }
     cdptr = fileToDisk<unsigned char>(compName);
   }
 

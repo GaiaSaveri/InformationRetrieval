@@ -15,12 +15,19 @@ struct CompressedPostings : public Postings{
   /** default constructor */
   CompressedPostings() : Postings{}{
     postCompName = "files/compressed_posting_list.txt";
-    compressPostings();
+    std::string offFile = "files/compressed_post_offsets";
+    if(exists(postCompName) && exists(offFile)){
+      //file is present, only need to set the offsets
+      fileToVector(offFile, compPostingOffsets);
+    }
+    else {
+      //file not present, need to compress
+      compressPostings();
+      vectorToFile(offFile, compPostingOffsets);
+    }
     cplptr = fileToDisk<unsigned char>(postCompName);
   }
 
-  /** read a posting list from the uncompressed file */
-  //void readPostingUncompressed(char* &ptr, List<int>& postings);
   /** compute the gaps in the posting list entries */
   void computeGaps(List<int>& l, std::vector<int>& gaps);
   /** compress an (unsigned) int using variable byte encoding */

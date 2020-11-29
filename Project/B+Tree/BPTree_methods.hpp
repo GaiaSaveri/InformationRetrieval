@@ -37,7 +37,7 @@ void BPTree<Tk,Tv>::searchValues(Tk key, typename BPTree<Tk,Tv>::LinkedList& val
   if(leaf){
     //index corresponding to the key we are searching for
     int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
-    values = leaf->values.at(i);
+    values = *(leaf->values.at(i));
   } else{
     std::cout<<"the key "<<key<<" is not in the tree"<<std::endl;
   }
@@ -73,8 +73,8 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
       int idx = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
       current = current->children.at(idx).get();
     }
-    LinkedList l{};
-    l.insert(value, method::push_back);
+    LinkedList* l = new LinkedList{};
+    l->insert(value, method::push_back);
     //now current node is a leaf node
     if(current->keys.size()<branchingFactor) { //leaf is not full
       //need to find the position where to insert the key
@@ -87,7 +87,6 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
         for(int j = current->keys.size()-1; j>i; j--) {
           //shifting
           current->keys.at(j) = current->keys.at(j-1);
-          //SE BUG PERSISTE PROVA A METTERE =
           current->values.at(j) = std::move(current->values.at(j-1));
         }
         current->keys.at(i) = key;
@@ -95,7 +94,7 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
       }
     } else { //if the leaf is full
       std::vector<Tk> fakeNode(current->keys);
-      std::vector<LinkedList> fakeNodeValues(current->values);
+      std::vector<LinkedList*> fakeNodeValues(current->values);
       //find "theorical" place for the new key
       int i = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
       //create space
@@ -251,7 +250,7 @@ template<class Tk, class Tv>
 void BPTree<Tk,Tv>::addValue(typename BPTree<Tk,Tv>::Node* leaf, Tk key, Tv value){
   //index corresponding to the key we are searching for
   int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
-  leaf->values.at(i).insert(value, method::push_back);
+  (*(leaf->values.at(i))).insert(value, method::push_back);
 }
 //--------------------------------- Insert ----------------------------------------//
 template<class Tk, class Tv>
@@ -280,9 +279,8 @@ void BPTree<Tk, Tv>::writeOnFile(){
         //write on dictionary the key
         dictionary<<firstLeaf->keys.at(i)<<"\n";
         //write on posting_lists the values
-        for(auto v : firstLeaf->values.at(i)){
+        for(auto v : *(firstLeaf->values.at(i))){
           posting_lists<<v<<" ";
-          //posting_lists.write((char*)&v, sizeof(int));
         }
         posting_lists<<"\n";
       }
@@ -293,6 +291,8 @@ void BPTree<Tk, Tv>::writeOnFile(){
 }
 //------------------------------ PRINT METHODS ------------------------------------//
 //------------------------------- Print Leaves ------------------------------------//
+#ifdef DEBUG
+
 template<class Tk, class Tv>
 void BPTree<Tk,Tv>::printLeaves(){
   //pointer to the leftmost leaf starting from the root
@@ -304,7 +304,7 @@ void BPTree<Tk,Tv>::printLeaves(){
   while(ll){
     for(int i=0; i<ll->keys.size(); i++){
       std::cout<<"["<<ll->keys.at(i)<<"] --> ";
-      std::cout<<"< "<<ll->values.at(i)<<">"<<std::endl;
+      std::cout<<"< "<<*(ll->values.at(i))<<">"<<std::endl;
     }
     ll = ll->next.get();
   }
@@ -344,3 +344,5 @@ void BPTree<Tk,Tv>::printLevels(){
     std::cout<<std::endl;
   }
 }
+
+#endif
