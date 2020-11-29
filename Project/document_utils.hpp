@@ -97,12 +97,12 @@ void documentPreprocessing(std::vector<std::string>& words, std::string& filenam
 }
 
 //read all filenames of a folder
-void readFolder(std::vector<std::string>& filenames){
+void readFolder(std::vector<std::string>& filenames, std::string& dirname){
   DIR *dir;
   struct dirent *ent;
-  std::string dirname = "data/small/";
+  //std::string dirname = "data/small/";
   std::string tmp;
-  if((dir=opendir("data/small"))!=nullptr){
+  if((dir=opendir(dirname.c_str()))!=nullptr){
     while((ent = readdir(dir))!=nullptr){
         filenames.push_back(ent->d_name);
     }

@@ -2,6 +2,8 @@
 #define __DICTIONARY_
 
 #include"../FileIndex.hpp"
+#include"../TreeIndex.hpp"
+#include"../file_utils.hpp"
 
 struct Dictionary{
   /** name of the file containing the uncompressed dictionary */
@@ -15,6 +17,10 @@ struct Dictionary{
 
   Dictionary() {
     dictName = "files/dictionary.txt";
+    if(!exists(dictName)){
+      //build dictionary (and posting lists) using B+Tree
+      TreeIndex index{};
+    }
     dptr = fileToDisk<char>(dictName);
     terms = countLinesFile(dictName);
     setOffsets();

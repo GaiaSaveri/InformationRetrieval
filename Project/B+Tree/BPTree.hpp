@@ -107,8 +107,8 @@ public:
    *If the key is not present, it adds the key-value pair in the B+Tree.
    */
   void insert(Tk key, Tv value);
-  
-#ifdef DEBUG
+
+//#ifdef DEBUG
   /**
    *\brief function to print the keys at the leaves' level.
    */
@@ -119,7 +119,7 @@ public:
    */
   void printLevels();
 
-#endif
+//#endif
   /** destructor for the B+Tree */
   ~BPTree(){
     root.reset();

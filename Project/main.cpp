@@ -17,7 +17,7 @@ int main(){
   //std::string dirname = "data/small/";
   //int i = countFiles(dirname);
   //std::cout<<i<<std::endl;
-  IRSystem<TreeIndex> ir{};
+  IRSystem<FileIndex<CompressedDictionary, CompressedPostings>> ir{};
   //List<int> p;
   //std::string q = "maintain";
   //ir.invertedIndex.getPostingList(q, p);

@@ -2,21 +2,22 @@
 #define __IRSYSTEM_
 
 #include"file_utils.hpp"
+#include"TreeIndex.hpp"
 
 template<typename I>
 class IRSystem{
 
 public:
   using LinkedList = List<int>;
-
   template<typename IR> friend class QueryParser;
-  //using QueryParser = QueryParser<I>;
 
 private:
   /** name of the directory where all the document are */
   std::string corpus;
   /** number of documents in the corpus */
   int maxDocID;
+  /** inverted index */
+  I invertedIndex;
 
   /** generate a list having the form [0, 1, ..., maxDocID-1], used in NOT queries */
   void generateAllList(LinkedList& all){
@@ -28,8 +29,6 @@ private:
 
 public:
 
-  /** inverted index */
-  I invertedIndex;
   /** default constructor */
   IRSystem() : invertedIndex{} {
     corpus = "data/small/";
