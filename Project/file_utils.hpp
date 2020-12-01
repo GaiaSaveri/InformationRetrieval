@@ -49,7 +49,6 @@ template<class T>
 T* fileToDisk(std::string& filename){
   int size = getFileSize(filename);
   int file = open(filename.c_str(), O_RDONLY, 0);
-  //void* fp = mmap(NULL, size, PROT_READ, MAP_SHARED, file, 0);
   T* fp = (T*)mmap(NULL, size, PROT_READ, MAP_SHARED, file, 0);
   if(fp == MAP_FAILED) std::cout<<"mmap failed"<<std::endl;
   //T* ptr = reinterpret_cast<T*>(mmap(NULL, size, PROT_READ, MAP_FILE | MAP_SHARED, file, 0));

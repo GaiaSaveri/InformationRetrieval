@@ -1,3 +1,9 @@
+/**
+ *\file CompressedPostings.hpp
+ *\author Gaia Saveri
+ *\brief Class describing the compressed posting lists. It is inherited from postings.
+ */
+
 #ifndef __COMPRESSEDPOSTINGS_
 #define __COMPRESSEDPOSTINGS_
 
@@ -5,14 +11,20 @@
 #include"Postings.hpp"
 
 struct CompressedPostings : public Postings{
-  /** name of the file containing the compressed posting lists */
+  /** Name of the file containing the compressed posting lists */
   std::string postCompName;
-  /** number of bytes before the first byte of each block in the compressed file */
+  /** Number of bytes before the first byte of each posting list in the compressed file */
   std::vector<int> compPostingOffsets;
-  /** pointer to the beginning of the compressed posting lists file */
+  /** Pointer to the beginning of the compressed posting lists file */
   unsigned char* cplptr;
 
-  /** default constructor */
+  /**
+   *\brief Default constructor.
+   *
+   * If the file containing the compressed posting lists already exists (as well as the file
+   * containing the offsets), then those files are read.
+   * Otherwise they are created from scratch (and saved).
+   */
   CompressedPostings() : Postings{}{
     postCompName = "files/compressed_posting_list.txt";
     std::string offFile = "files/compressed_post_offsets";
@@ -27,20 +39,43 @@ struct CompressedPostings : public Postings{
     }
     cplptr = fileToDisk<unsigned char>(postCompName);
   }
-
-  /** compute the gaps in the posting list entries */
+  /**
+   *\brief Function for computing the gaps in the posting list entries.
+   *\param l Linked List containing the posting list we are interested in for computing the gaps.
+   *\param gaps Vector of integers representing the gaps between postings.
+   *
+   *This function produces the gaps between postings that will be later compressed.
+   */
   void computeGaps(List<int>& l, std::vector<int>& gaps);
-  /** compress an (unsigned) int using variable byte encoding */
+  /**
+   *\brief Compress an (unsigned) int using variable byte coding technique.
+   *\param coded Vector of unsigned int containing the "encoded version" of each
+   *byte of the number we want to compress.
+   *\param number Number (unsigned integer) we are going to compress.
+   */
   void VBencoder(std::vector<unsigned char>& coded, int number);
-  /** compress the whole posting lists file */
+  /**
+   *\brief Compress the whole posting lists file, using variable length encoding.
+   */
   void compressPostings();
 
-  /** uncompress an integer from VB code */
+  /**
+   *\brief Function for uncompressing an integer coded via variable length encoding.
+   *\param ptr Pointer to the starting byte of the number we are going to uncompress
+   *in the compressed posting lists file.
+   */
   int VBdecoder(unsigned char* &ptr);
-  /** find the i-th posting list in the compressed file */
+  /**
+   *\brief Find the i-th posting list in the compressed file.
+   *\param i Index of the line containing the posting list.
+   *\param postings Linked List in which we will store the posting list we read.
+   *
+   *For further details, please refer to the same function in the Postings.hpp file.
+   */
   void findPostingList(int i, List<int>& postings) override;
-
-  /** deafult destructor */
+  /**
+   *\brief Deafult destructor.
+   */
   ~CompressedPostings() = default;
 
 };

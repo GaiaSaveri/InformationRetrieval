@@ -27,10 +27,14 @@ void Postings::setOffsets(){
 //read a posting list from the uncompressed file
 void Postings::readPostingUncompressed(char* &ptr, List<int>& postings){
   int i = 0;
+  std::string s = "";
   while(ptr[i]!='\n'){
-    if(ptr[i]!=' ') {
-      postings.insert(ptr[i]-'0', method::push_back);
+    s.clear();
+    while(ptr[i]!=' '){
+      s.append(std::to_string(ptr[i]-'0'));
+      i++;
     }
+    postings.insert(std::stoi(s), method::push_back);
     i++;
   }
 }

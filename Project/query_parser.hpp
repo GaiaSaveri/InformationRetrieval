@@ -28,9 +28,9 @@ void QueryParser<IRS>::preprocessTokens(std::vector<std::string>& tokens){
     }
   }
   //normalize terms
-  normalize(terms); //QUESTO E' DEL DOCUMENT UTILS!!!!!!!!!!!!
+  normalize(terms);
   //perform stemming on terms
-  stemming(terms); //QUESTO E' DEL DOCUMENT UTILS!!!!!!!!!!!!
+  stemming(terms); 
   //back to tokenized query, in the right positions given  by ind
   for(int i=0; i<terms.size(); i++){
     tokens.at(ind.at(i)) == terms.at(i);
@@ -64,9 +64,9 @@ void QueryParser<IRS>::notQuery(std::string& term1, typename QueryParser<IRS>::L
   LinkedList all{}; //list containing all docID
   LinkedList list1{};
   //list of posintgs associated to term1
-  ir.invertedIndex.getPostingList(term1, list1); //QUESTO E' DELL'INDEX!!!!!!!!!!!!
+  ir.invertedIndex.getPostingList(term1, list1);
   //populate all
-  ir.generateAllList(all); //QUESTO E' DELL'IR!!!!!!!!!!!!
+  ir.generateAllList(all);
   //difference between all and list1
   all.difference(list1, result);
 }
@@ -82,7 +82,7 @@ void QueryParser<IRS>::answerQuery(typename QueryParser<IRS>::LinkedList& list1,
   }
   else { //"AND NOT" or "OR NOT"
     LinkedList all{};
-    ir.generateAllList(all); //QUESTO E' DELL'IR!!!!!!!!!!!!
+    ir.generateAllList(all);
     LinkedList diff{};
     all.difference(list2, diff);
     if(op.compare("ANDNOT") == 0){
@@ -102,10 +102,10 @@ void QueryParser<IRS>::answerSimpleQuery(std::vector<std::string>& tokens, typen
     start = 2;
     notQuery(tokens.at(1), result, ir);
   }
-  else ir.invertedIndex.getPostingList(tokens.at(0), result); //QUESTO E' DELL'INDEX !!!!!
+  else ir.invertedIndex.getPostingList(tokens.at(0), result);
   for(int i=start; i<tokens.size(); i+=2){
     LinkedList tmp2{}; //list of the current term
-    ir.invertedIndex.getPostingList(tokens.at(i+1), tmp2); //QUESTO E' DELL'INDEX !!!!!
+    ir.invertedIndex.getPostingList(tokens.at(i+1), tmp2);
     answerQuery(result, tmp2, tokens.at(i), tmp1, ir);
     result = std::move(tmp1);
   }
@@ -190,7 +190,7 @@ void QueryParser<IRS>::getListFromEscapeCharacter(std::string& currentTerm, std:
     }
     result = cList.at(i);
   }
-  else ir.invertedIndex.getPostingList(currentTerm, result); //QUESTO E' DELL'INDEX !!!!!
+  else ir.invertedIndex.getPostingList(currentTerm, result);
 }
 
 //answer a query that depends on other subexpression
@@ -210,7 +210,7 @@ void QueryParser<IRS>::parsePartialQuery(std::vector<std::string>& currentQuery,
     if(currentQuery.at(i).compare("AND")!=0 && currentQuery.at(i).compare("OR")!=0 && currentQuery.at(i).compare("NOT")!=0){
       //retrieve its posting list
       LinkedList currentList{};
-      ir.invertedIndex.getPostingList(currentQuery.at(i), currentList); //QUESTO E' DELL'INDEX !!!!!
+      ir.invertedIndex.getPostingList(currentQuery.at(i), currentList);
       cList.push_back(currentList);
       currentQuery.at(i) = currentEscapeTerm;
     }

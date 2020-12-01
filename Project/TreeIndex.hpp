@@ -1,3 +1,9 @@
+/**
+ *\file TreeIndex.hpp
+ *\author Gaia Saveri
+ *|brief Class describing an inverted index built using a B+Tree.
+ */
+
 #ifndef __TREEINDEX_
 #define __TREEINDEX_
 
@@ -5,15 +11,19 @@
 #include"B+Tree/BPTree.hpp"
 #include"file_utils.hpp"
 
-
 struct TreeIndex{
 
   using LinkedList = List<int>;
 
-  /** the index is a B+tree*/
+  /** The index is a B+tree, where keys are strings (terms), and values are integers (DocIDs). */
   BPTree<std::string, int> index;
-
-  /** default constructor */
+  /**
+   *\brief Default constructor.
+   *
+   *If the files containing the dictionary and the posting lists are already present,
+   *it inserts each term with its associated posting list in the tree.
+   *Otherwise the index is built from scratch, starting from the corpus.
+   */
   TreeIndex(){
     std::string dictionary = "files/dictionary.txt";
     std::string posting_lists = "files/posting_lists.txt";
@@ -34,12 +44,21 @@ struct TreeIndex{
       }
       else { //need to built the tree from scratch
         std::vector<std::string> filenames;
-        std::string dirname = "data/small/";
+        std::string dirname = "data/documents/";
         buildFromScratch(filenames, dirname);
         saveIndex();
       }
   }
-
+  /**
+   *\brief Function to built a B+tree containing terms and posting lists starting from the corpus.
+   *\param filenames Names of the files used as documents.
+   *\param dirname Name of the directory containing all the documents of our collection.
+   *
+   *The directory is first scanned to get all the filenames. Then for each file a document is
+   *instanciated and all the words (tokens) present in the file are preprocessed and
+   *inserted in the tree (i.e. in the index), as well as the DocId associated to the document
+   *we are scanning.
+   */
   void buildFromScratch(std::vector<std::string>& filenames, std::string& dirname){
     readFolder(filenames, dirname);
     for(int i=0; i<filenames.size(); i++){
@@ -48,25 +67,38 @@ struct TreeIndex{
         index.insert(d.doc.second.at(j), i);
     }
   }
-
+  /**
+   *\brief Retrieve the posting list associated to a term.
+   *\param term Term of which we want to get the associated posting list.
+   *\param postings Linked List containing the postings we are looking for.
+   */
   void getPostingList(std::string& term, List<int>& postings){
     index.searchValues(term, postings);
   }
 
-//#ifdef DEBUG
+#ifdef DEBUG
+  /**
+   *\brief Function to print each term along with its associated posting list, in alphabetical order.
+   */
   void printInvertedIndex(){
     index.printLeaves();
   }
-
+  /**
+   *\brief Function to print all the terms as nodes of the B+tree, to see the structure of the tree itself.
+   */
   void printDictionary(){
     index.printLevels();
   }
-//#endif
-
+#endif
+  /**
+   *\brief Function to save the dictionary and the posting lists on two separated files.
+   */
   void saveIndex(){
     index.writeOnFile();
   }
-  /** default destructor */
+  /**
+   *\brief Default destructor.
+   */
   ~TreeIndex() = default;
 };
 

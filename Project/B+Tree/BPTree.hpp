@@ -1,7 +1,7 @@
 /**
  *\file BPTree.hpp
  *\author Gaia Saveri
- *\brief header containing the implementation of the B+Tree.
+ *\brief Class implementating a B+Tree.
  */
 
 #ifndef __BPTREE_
@@ -16,6 +16,10 @@
 
 #include"node.hpp"
 
+/**
+ *\tparam Tk Type of the keys in the tree.
+ *\tparam Tv Tyoe of the values in the tree.
+ */
 template<class Tk, class Tv>
 class BPTree {
 
@@ -24,103 +28,101 @@ public:
   using LinkedList = List<Tv>;
 
 private:
-  /** unique pointer to the root node */
+  /** Unique pointer to the root node. */
   std::unique_ptr<Node> root;
-  /** branching factor of the B+Tree */
+  /** Branching factor of the B+Tree. */
   int branchingFactor;
   /**
-   *\brief find the parent of the current node
-   *\param current
-   *\param child
-   *
-   *Leaves nodes are ignored (cannot be parent of any other node by definition).
-   *Also parents of the leaves are ignored, this is because this function is called
-   *inside the insertInternal method.
+   *\brief Find the parent of the current node.
+   *\param child Node of we want to find the parent of.
    */
   Node* findParent(Node* child);
   /**
-   *\brief auxiliary function to insert a key in an internal node
-   *\param key key of the node to be inserted
-   *\param parent node in which to insert the key
-   *\param child node currently containing key
+   *\brief Auxiliary function to insert a key in an internal node
+   *\param key Key of the node to be inserted.
+   *\param parent Node in which to insert the key.
+   *\param child Node currently containing key.
    */
   void insertInternal(Tk key, Node* parent, Node** child);
   /**
-    *\brief function to insert a new key in a leaf node of the B+Tree.
-    *\param key key to be inserted
-    *\param value value associated to a key
+    *\brief Function to insert a new key in a leaf node of the B+Tree.
+    *\param key Key to be inserted.
+    *\param value Value associated to a key.
     */
   void insertFirst(Tk key, Tv value);
   /**
-   *\brief function to add a value in the linked list associated to a key already
+   *\brief Function to add a value in the linked list associated to a key already
    *present in the B+Tree.
-   *\param leaf leaf containing the key
-   *\param key key associated to the value we want to add
-   *\param value value we want to add in the linked list associated to the key.
+   *\param leaf Leaf containing the key.
+   *\param key Key associated to the value we want to add.
+   *\param value Value we want to add in the linked list associated to the key.
    */
   void addValue(Node* leaf, Tk key, Tv value);
-public:
 
-  /** default constructor */
+public:
+  /**
+   *\brief Default constructor.
+   */
   BPTree() {
     root = nullptr;
     branchingFactor = 4;
   }
-
-  /** custom constructor */
+  /**
+   *\brief Custom constructor.
+   *\param bf Branching factor of the B+Tree.
+   */
   BPTree(int bf){
     branchingFactor = bf;
   }
-
   /**
-   *\brief function to get the branching factor of the B+Tree
-   *\return int branching factor
+   *\brief Function to get the branching factor of the B+Tree.
+   *\return int Branching factor.
    */
   int getBF(){
     return branchingFactor;
   }
   /**
-   *\brief write a file containing all the keys in the leaves (one per line),
+   *\brief Function used to write a file containing all the keys in the leaves (one per line),
    *and another one with the linked lists of values (one linked list for each line).
-   *To i-th line of the file containing the keys corresponds the i-th line containing
+   *
+   *To the i-th line of the file containing the keys corresponds the i-th line of the file containing
    *the lists.
    */
    void writeOnFile();
   /**
-   *\brief function to search a key (witnessed in a leaf node).
-   *\param key key to be searched
-   *\return Node* pointer to the leaf containing the key (nullptr if key not present)
+   *\brief Function to search a key (witnessed in a leaf node).
+   *\param key Key to be searched.
+   *\return Node* Pointer to the leaf containing the key (nullptr if key not present).
    */
   Node* searchLeaf(Tk key);
-
   /**
-   *\brief function to retrieve the linked list of values associated to a key.
+   *\brief Function to retrieve the linked list of values associated to a key.
    *
    */
   void searchValues(Tk key, LinkedList& values);
-
   /**
-   *\brief function to insert a key an associated value in the B+Tree.
+   *\brief Function to insert a key an associated value in the B+Tree.
    *
    *The function first search for the key in the tree: if the key is already in the
-   *tree, it adds the value to the linked list of value associated to the key.
+   *tree, it adds the value to the linked list of values associated to the key.
    *If the key is not present, it adds the key-value pair in the B+Tree.
    */
   void insert(Tk key, Tv value);
 
-//#ifdef DEBUG
+#ifdef DEBUG
   /**
-   *\brief function to print the keys at the leaves' level.
+   *\brief Function to print the keys and associated values at the leaves' level.
    */
   void printLeaves();
-
   /*
-   *\brief function to print the B+tree level-wise
+   *\brief Function to print the B+tree level-wise.
    */
   void printLevels();
 
-//#endif
-  /** destructor for the B+Tree */
+#endif
+  /**
+   *\brief Destructor for the B+Tree.
+   */
   ~BPTree(){
     root.reset();
   };

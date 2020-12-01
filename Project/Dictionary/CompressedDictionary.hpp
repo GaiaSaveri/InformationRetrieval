@@ -1,3 +1,9 @@
+/**
+ *\file CompressedDictionary.hpp
+ *\author Gaia Saveri
+ *\brief Class describing a compressed dictionary. It is inherited from Dictionary.
+ */
+
 #ifndef __COMPRESSEDDICTIONARY_
 #define __COMPRESSEDDICTIONARY_
 
@@ -5,18 +11,23 @@
 #include"Dictionary.hpp"
 
 struct CompressedDictionary : public Dictionary{
-  /** name of the file containing the compressed dictionary */
+  /** Name of the file containing the compressed dictionary */
   std::string compName;
-  /** block size */
+  /** Block size */
   int k;
-  /** last block size */
+  /** Last block size (if term%k!=0, then last block may have less than k terms) */
   int lastBlock;
-  /** number of bytes before the starting byte of each block (in the compressed dictionary) */
+  /** Number of bytes before the starting byte of each block (in the compressed dictionary) */
   std::vector<int> offsets;
-  /** pointer to the beginning of compressed dictionary */
+  /** Pointer to the beginning of compressed dictionary file. */
   unsigned char* cdptr;
-
-  /** default constructor */
+  /**
+   *\brief Default constructor.
+   *
+   * If the file containing the compressed dictionary already exists (as well as the file
+   * containing the offsets), then those files are read.
+   * Otherwise they are created from scratch (and saved).
+   */
   CompressedDictionary() : Dictionary{} {
     compName = "files/compressed_dictionary.txt";
     std::string offFile = "files/compressed_dict_offsets";
@@ -32,23 +43,66 @@ struct CompressedDictionary : public Dictionary{
     cdptr = fileToDisk<unsigned char>(compName);
   }
 
-  /** read a block of uncompressed terms */
+  /**
+   *\brief Read a block of uncompressed terms.
+   *\param dptr Pointer to the beginning of the uncompressed dictionary file.
+   *\param k Number of terms to read (either k or lastBlock).
+   *\param termBlock Vector of strings in which the read terms will be stored.
+   *
+   *Starting from the beginning of the uncompressed dictionary, this function will read
+   *all terms in the dictionary, block by block.
+   */
   void readBlockUncompressed(char* &dptr, int k, std::vector<std::string>& termBlock);
-  /** front coding of the block */
+  /**
+   *\brief Front coding of a block of terms.
+   *\param currentOffset Number of bytes occupied by the current block of terms
+   *(needed to populate the vector offsets).
+   *\param block Block of terms we are going to compress.
+   *\param file File in which we will write the compressed dictionary.
+   */
   void frontCodingBlock(int& currentOffset, std::vector<std::string>& block, std::ofstream& file);
-  /** compress the whole dictionary */
+  /**
+   *\brief Compress the whole dictionary.
+   *
+   *Starting from the beginning of the file where the uncompressed dictionary is saved,
+   *this function reads a block of terms, compress it and save all the required informations on
+   *another file.
+   */
   void compressDictionary();
 
-  /** read first term in a block **/
+  /**
+   *\brief Read first term in a block.
+   *\param ptr Pointer to the beginning of the block in the compressed dictionary.
+   *\return std::string String in which we store the first term of the block we are reading.
+   *
+   *This is an auxiliary function that helps in identifying the block containing a certain term.
+   */
   std::string readFirst(unsigned char* &cdptr);
-  /** find the block theoritically containing a term by binary searching the compressed dictionary */
+  /**
+   *\brief Find the block theoritically containing a term by binary searching the compressed dictionary
+   *\param term Term we want to find inside the compressed dictionary.
+   *\return int Index of the block (eventually) containing the block
+   *(we may later discover that the term is not in the dictionary).
+   */
   int findBlock(std::string& term);
-  /** read a block of compressed terms */
+  /**
+   *\brief Read a block of compressed terms.
+   *\param ptr Pointer to the beginning of the block in the compressed dictionary file.
+   *\param k Number of terms contained in the current block of terms.
+   *\param termBlock Vector of strings in which the terms contained in the block will be stored.
+   */
   void readBlockCompressed(unsigned char* &cdptr, int k, std::vector<std::string>& termBlock);
-  /** find a term inside the compressed dictionary */
+  /**
+   *\brief Find a term inside the compressed dictionary.
+   *\param term Term that we are looking for.
+   *\param index Location in the offsets vector of the starting byte of the term.
+   *\return int It is set to 1 if the term has been found, -1 otherwise.
+   */
   int findTerm(std::string& term, int& index) override;
 
-  /** destructor */
+  /**
+   *\brief Default destructor for the compressed dictionary.
+   */
   ~CompressedDictionary() = default;
 };
 

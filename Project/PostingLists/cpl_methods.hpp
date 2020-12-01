@@ -7,19 +7,6 @@
 
 //--------------------------- COMPRESSION METHODS ----------------------------//
 
-/**
-//read a posting list from the uncompressed file
-void CompressedPostings::readPostingUncompressed(char* &ptr, List<int>& postings){
-  int i = 0;
-  while(ptr[i]!='\n'){
-    if(ptr[i]!=' ') {
-      postings.insert(ptr[i]-'0', method::push_back);
-    }
-    i++;
-  }
-}
-*/
-
 //compute the gaps in the posting list entries
 void CompressedPostings::computeGaps(List<int>& l, std::vector<int>& gaps){
   //reverse list in a vector

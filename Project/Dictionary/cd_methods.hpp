@@ -32,7 +32,7 @@ void CompressedDictionary::frontCodingBlock(int& currentOffset, std::vector<std:
     std::string suffix = ""; //suffix of the current term
     //compute prefix
     while((block.at(i-1).at(prefix)==block.at(i).at(prefix)) && prefix<block.at(i-1).size()-1){
-      //it can happen that a whole word is prefix for the sequent
+      //it can happen that a whole word is prefix for the successive word
       //e.g. cent - central
       prefix++;
     }

@@ -21,10 +21,10 @@ void Dictionary::setOffsets(){
     dicOffsets.at(i) += dicOffsets.at(i-1);
 }
 
-void Dictionary::readTerm(std::string& term, char* &dptr){
+void Dictionary::readTerm(std::string& term, char* &ptr){
   int j = 0;
-  while(dptr[j]!='\n'){
-    term.push_back(dptr[j]);
+  while(ptr[j]!='\n'){
+    term.push_back(ptr[j]);
     j++;
   }
 }

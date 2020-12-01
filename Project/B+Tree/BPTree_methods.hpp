@@ -39,6 +39,7 @@ void BPTree<Tk,Tv>::searchValues(Tk key, typename BPTree<Tk,Tv>::LinkedList& val
     int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
     values = *(leaf->values.at(i));
   } else{
+    //QUI ANDREBBE MESSO L'ERRORE
     std::cout<<"the key "<<key<<" is not in the tree"<<std::endl;
   }
 }
@@ -291,7 +292,7 @@ void BPTree<Tk, Tv>::writeOnFile(){
 }
 //------------------------------ PRINT METHODS ------------------------------------//
 //------------------------------- Print Leaves ------------------------------------//
-//#ifdef DEBUG
+#ifdef DEBUG
 
 template<class Tk, class Tv>
 void BPTree<Tk,Tv>::printLeaves(){
@@ -345,4 +346,4 @@ void BPTree<Tk,Tv>::printLevels(){
   }
 }
 
-//#endif
+#endif
