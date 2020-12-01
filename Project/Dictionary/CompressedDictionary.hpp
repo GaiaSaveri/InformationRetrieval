@@ -31,7 +31,7 @@ struct CompressedDictionary : public Dictionary{
   CompressedDictionary() : Dictionary{} {
     compName = "files/compressed_dictionary.txt";
     std::string offFile = "files/compressed_dict_offsets";
-    k = 4;
+    k = 8;
     if(exists(compName) && exists(offFile)){ //compress dictionary already exists
       fileToVector(offFile, offsets);
       lastBlock = (terms%k == 0)? k : terms%k;
