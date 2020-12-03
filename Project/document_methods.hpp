@@ -43,6 +43,9 @@ void Document::removeDuplicates(std::vector<std::string>& words){
 void Document::documentPreprocessing(std::vector<std::string>& words, std::string& filename){
   readFile(words, filename);
   normalize(words);
+  //std::ofstream file;
+  //file.open("data/words.txt", std::ios::app);
+  //for(auto x : words) file<<x<<"\n";
   std::string fileStopWords = "data/stopwords";
   std::vector<std::string> stopwords;
   removeStopWords(words, stopwords, fileStopWords);

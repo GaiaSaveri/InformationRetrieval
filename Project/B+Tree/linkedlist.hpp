@@ -105,17 +105,20 @@ public:
    */
   void union_list(const List& l, List& u);
   /**
-   *\brief function to create a list with all values of the current list but input value.
-   *\param value value we want to exclude from the returned list.
-   *\param c list containing the complement.
-   */
-  //void complement(const T value, List& c);
-  /**
    *\brief function to got all elements of the current list except the ones in the input list.
    *\param l list containing the values we want to exclude.
    *\param d list containing the "difference" if the two lists.
    */
   void difference(const List& l, List& d);
+
+  void listToVector(std::vector<T>& v){
+    auto temp = head.get();
+    while(temp->next){
+      v.push_back(temp->value);
+      temp = temp->next.get();
+    }
+    v.push_back(temp->value);
+  }
 
   /**
    *\brief overload of the operator << to visualize the linked list

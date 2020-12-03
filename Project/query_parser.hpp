@@ -30,10 +30,10 @@ void QueryParser<IRS>::preprocessTokens(std::vector<std::string>& tokens){
   //normalize terms
   normalize(terms);
   //perform stemming on terms
-  stemming(terms); 
+  stemming(terms);
   //back to tokenized query, in the right positions given  by ind
   for(int i=0; i<terms.size(); i++){
-    tokens.at(ind.at(i)) == terms.at(i);
+    tokens.at(ind.at(i)) = terms.at(i);
   }
 }
 
@@ -167,8 +167,9 @@ void QueryParser<IRS>::getListFromEscapeCharacter(std::string& currentTerm, std:
       std::string e = "#";
       std::string currentEscape = e.append(std::to_string(i));
       if(currentTerm.compare(currentEscape)==0){
-        //forse dovrei lasciarla una
-        currentQuery.erase(std::remove_if(currentQuery.begin()+(i+1), currentQuery.end(),
+        auto itr=std::find(currentQuery.begin(), currentQuery.end(), currentEscape);
+        auto index=std::distance(currentQuery.begin(), itr);
+        currentQuery.erase(std::remove_if(currentQuery.begin()+(index+1), currentQuery.end(),
           [currentEscape](std::string s){return (s==currentEscape);}), currentQuery.end());
         found = true;
       }
@@ -204,10 +205,10 @@ void QueryParser<IRS>::parsePartialQuery(std::vector<std::string>& currentQuery,
   for(int i=0; i<currentQuery.size(); i++){
     std::string escapeTerm = "%";
     std::string currentEscapeTerm = escapeTerm.append(std::to_string(cList.size()));
-  //if currentQuery.at(i) is a term or an operator
-  if(currentQuery.at(i).find("#") == std::string::npos){
+  //if currentQuery.at(i) is an escape character
+  if(currentQuery.at(i).find("#") == std::string::npos && currentQuery.at(0).compare("NOT")!=0){
     //if current query is a term
-    if(currentQuery.at(i).compare("AND")!=0 && currentQuery.at(i).compare("OR")!=0 && currentQuery.at(i).compare("NOT")!=0){
+    if(currentQuery.at(i).compare("AND")!=0 && currentQuery.at(i).compare("OR")!=0 && currentQuery.at(i).compare("NOT")!=0 && currentQuery.at(i).compare("ORNOT")!=0 && currentQuery.at(i).compare("ANDNOT")!=0){
       //retrieve its posting list
       LinkedList currentList{};
       ir.invertedIndex.getPostingList(currentQuery.at(i), currentList);
@@ -215,12 +216,13 @@ void QueryParser<IRS>::parsePartialQuery(std::vector<std::string>& currentQuery,
       currentQuery.at(i) = currentEscapeTerm;
     }
     //if currentQuery.at(i) is an operator
-    else if(currentQuery.at(i).compare("AND")==0 || currentQuery.at(i).compare("OR")==0 || currentQuery.at(i).compare("NOT")==0){
-      if(currentQuery.at(i+1).compare("NOT")==0){
+    //else if(currentQuery.at(i).compare("AND")==0 || currentQuery.at(i).compare("OR")==0 || currentQuery.at(i).compare("NOT")==0){
+      //if(currentQuery.at(i+1).compare("NOT")==0){
         //collapsing: AND NOT = ANDNOT, OR NOT = ORNOT
-        currentQuery.at(i).append("NOT");
-        currentQuery.erase(currentQuery.begin()+(i+1));
-      } } }
+        //currentQuery.at(i).append("NOT");
+        //currentQuery.erase(currentQuery.begin()+(i+1));
+      //} }
+    }
   }
   //answer query
   LinkedList tmp1{}; //temporary result

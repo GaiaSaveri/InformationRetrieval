@@ -47,7 +47,7 @@ struct FileIndex{
     if(found!=-1){
       postingList.findPostingList(index, postings);
     }
-    else std::cout<<"term not found"<<std::endl; //QUI ANDREBBE MESSO ERRORE!!!
+    else std::cout<<"term not found "<<term<<std::endl; //QUI ANDREBBE MESSO ERRORE!!!
   }
   /**
    *\brief Default destructor.
