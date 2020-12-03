@@ -62,7 +62,7 @@ typename BPTree<Tk,Tv>::Node* BPTree<Tk,Tv>::findParent(typename BPTree<Tk,Tv>::
 template<class Tk, class Tv>
 void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
   if(!root.get()) { //the tree is empty
-    root.reset(new Node(true, key, value));
+    root.reset(new Node(key, value));
   } else { //tree is non empty
     //starting from the root
     Node* current = root.get();
@@ -137,7 +137,7 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
       //if we splitted the root, we need to create a new root
       if(current == root.get()) {
         root.release();
-        Node* newRoot = new Node(false, newLeaf->keys.at(0), current, newLeaf); //not a leaf
+        Node* newRoot = new Node(newLeaf->keys.at(0), current, newLeaf); //not a leaf
         root.reset(newRoot);
       } else { //we didn't split the root
         //insert new key in the parent
@@ -237,7 +237,7 @@ void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node* parent,
 
       if((parent) == root.get()){ //we splitted the root
         root.release();
-        Node* newRoot = new Node(false, partitionKey, parent, newNode);
+        Node* newRoot = new Node(partitionKey, parent, newNode);
         root.reset(newRoot);
       } else { //we splitted an internal node
         //recursive call

@@ -1,3 +1,9 @@
+/**
+ *\file node.hpp
+ *\author Gaia Saveri
+ *\brief Class describing a node of the B+Tree.
+ */
+
 #ifndef __NODE_
 #define __NODE_
 
@@ -5,30 +11,39 @@
 
 #include"linkedlist.hpp"
 
+/**
+ *\tparam k Type of the keys of the node.
+ *\tparam v Type of the values of the (leaf) node.
+ */
 template<class k, class v>
 struct node {
-
+  //BPTree uses leftLeaf method
   template<class Tk, class Tv> friend class BPTree;
 
   using LinkedList = List<v>;
 
-  /** to discriminate between internal and leaf nodes */
+  /** Discriminate between internal and leaf nodes. */
   bool leaf;
-  /** array of keys in a node (sorted, duplicates not allowed) */
+  /** Array of keys of a node (sorted, duplicates not allowed) */
   std::vector<k> keys;
-  /** pointer to the next leaf (only for leaf nodes) */
+  /** Unique pointer to the next leaf (only for leaf nodes) */
   std::unique_ptr<node> next;
   union{ //only one of the following will be active for each node
-    /** pointers to children nodes (for internal nodes) */
+    /** Unique pointers to children nodes (for internal nodes) */
     std::vector<std::unique_ptr<node>> children;
-    /** pointers to linked lists of values (for leaf nodes) */
+    /** Pointers to linked lists of values (for leaf nodes) */
     std::vector<LinkedList*> values;
   };
-
-  /** default constructor */
+  /**
+    * brief Default constructor.
+    */
   node() = default;
 
-  /** custom constructor */
+  /**
+   *\brief Custom constructor.
+   *\param l Boolean value specifying if we are construicting a leaf node (true)
+   * or an internal node (false).
+   */
   node(bool l){
     leaf = l;
     //we created a leaf
@@ -37,27 +52,27 @@ struct node {
     else if (!l) new (&this->children) std::vector<std::unique_ptr<node>>;
   }
   /**
-   *\brief custom constructor
-   *\param l boolean indicating wheter the node is or isn't a leaf node
-   *\param key key to insert in the node we are constructing
-   *\param value value to insert in the node we are contructing
+   *\brief Custom constructor.
+   *\param key Key to insert in the node we are constructing.
+   *\param value Value to insert in the node we are contructing.
    *
    */
-  node(bool l, k key, v value){
-    leaf = l;
+  node(k key, v value){
+    leaf = true;
     keys.push_back(key);
     new (&this->values) std::vector<LinkedList*>;
-    //LinkedList list{};
     LinkedList* ll = new LinkedList{};
     ll->insert(value, method::push_back);
     this->values.push_back(ll);
   }
   /**
-   *\brief custom constructor
-   *
+   *\brief Custom constructor.
+   *\param key Key to insert in the node we are constructing.
+   *\param child1 Pointer to the node that has to become child of the current node.
+   *\param child2 Pointer to the node that has to become child of the current node.
    */
-  node(bool l, k key, node* child1, node* child2){
-    leaf = l;
+  node(k key, node* child1, node* child2){
+    leaf = false;
     keys.push_back(key);
     new (&this->children) std::vector<std::unique_ptr<node>>;
     this->children.resize(2);
@@ -65,15 +80,14 @@ struct node {
     this->children.at(0).reset(child1);
     this->children.at(1).reset(child2);
   }
-
   /**
-   *\brief function to find the leftmost leaf starting from a given node
-   *\param current node from which we start
-   *\return node* pointer to the leaf we are searching for
+   *\brief Function to find the leftmost leaf starting from the current node.
+   *\return node* Pointer to the leaf we are searching for.
    */
   node* leftLeaf();
-
-  /** default destructor */
+  /**
+   *\brief Default destructor.
+   */
   ~node(){
     this->keys.clear();
   }
