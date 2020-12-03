@@ -9,6 +9,7 @@
 #define __FILEINDEX_
 
 #include"B+Tree/linkedlist.hpp"
+#include"B+Tree/BPTree.hpp"
 
 /**
  *\taparam D Type of dictionary (either Dictionary or CompressedDictionary).
@@ -42,12 +43,13 @@ struct FileIndex{
    * saving the B+tree's leaves), we retrieved the desired posting list.
    */
   void getPostingList(std::string& term, List<int>& postings){
-    int index;
-    int found = dictionary.findTerm(term, index);
-    if(found!=-1){
-      postingList.findPostingList(index, postings);
+    try{
+      int index;
+      int found = dictionary.findTerm(term, index);
+      if(found!=-1) postingList.findPostingList(index, postings);
+    } catch (const TermNotFound& m) {
+      std::cerr<<m.message<<std::endl;
     }
-    else std::cout<<"term not found "<<term<<std::endl; //QUI ANDREBBE MESSO ERRORE!!!
   }
   /**
    *\brief Default destructor.

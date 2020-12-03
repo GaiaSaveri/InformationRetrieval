@@ -181,7 +181,10 @@ int CompressedDictionary::findTerm(std::string& term, int& index){
       if(termBlock.at(i) == term) found = 1;
       else i++;
     }
-    if(!found) return -1; //term not found
+    if(!found){
+      throw TermNotFound{"The term " + term + " is not present"};
+      return -1; //term not found
+    }
     else{
       index = b*k + i;
       return 1;

@@ -16,6 +16,12 @@
 
 #include"node.hpp"
 
+//for error handling purposes
+struct TermNotFound{
+  std::string message;
+  TermNotFound(const std::string& m) : message{m} {}
+};
+
 /**
  *\tparam Tk Type of the keys in the tree.
  *\tparam Tv Tyoe of the values in the tree.

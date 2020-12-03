@@ -11,6 +11,13 @@
 #include"../TreeIndex.hpp"
 #include"../file_utils.hpp"
 
+/**
+struct TermNotFound{
+  std::string message;
+  TermNotFound(const std::string& m) : message{m} {}
+};
+*/
+
 struct Dictionary{
   /** Name of the file containing the uncompressed dictionary */
   std::string dictName;

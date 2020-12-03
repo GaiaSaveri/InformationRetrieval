@@ -73,7 +73,12 @@ struct TreeIndex{
    *\param postings Linked List containing the postings we are looking for.
    */
   void getPostingList(std::string& term, List<int>& postings){
-    index.searchValues(term, postings);
+    try {
+      index.searchValues(term, postings);
+    }
+    catch(const TermNotFound& m){
+      std::cerr<<m.message<<std::endl;
+    }
   }
 
 #ifdef DEBUG

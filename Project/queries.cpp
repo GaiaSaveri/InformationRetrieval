@@ -11,8 +11,8 @@
 
 int main(){
 
-  //IRSystem<FileIndex<Dictionary, Postings>> ir1{};
-  IRSystem<FileIndex<CompressedDictionary, Postings>> ir2{};
+  IRSystem<FileIndex<CompressedDictionary, Postings>> ir1{};
+  //IRSystem<FileIndex<CompressedDictionary, Postings>> ir2{};
   //IRSystem<FileIndex<Dictionary, CompressedPostings>> ir3{};
   //IRSystem<FileIndex<CompressedDictionary, CompressedPostings>> ir4{};
   //IRSystem<TreeIndex> ir5;
@@ -23,11 +23,11 @@ int main(){
   //std::string line;
   //int i = 1;
   //while(std::getline(file, line)){
-  std::string query = "receivable";
+  std::string query = "ciao";
 
-    //std::cout<<query<<std::endl;
-    List<int> l1 = ir2.answer_query(query);
-    std::cout<<l1<<std::endl;
+    std::cout<<query<<std::endl;
+    List<int> l1 = ir1.answer_query(query);
+    //std::cout<<l1<<std::endl;
 
     /**
     std::vector<int> v1;

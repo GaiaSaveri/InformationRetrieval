@@ -39,8 +39,7 @@ void BPTree<Tk,Tv>::searchValues(Tk key, typename BPTree<Tk,Tv>::LinkedList& val
     int i = std::lower_bound(leaf->keys.begin(), leaf->keys.end(), key) - leaf->keys.begin();
     values = *(leaf->values.at(i));
   } else{
-    //QUI ANDREBBE MESSO L'ERRORE
-    std::cout<<"the key "<<key<<" is not in the tree"<<std::endl;
+    throw TermNotFound{"The term " + key + " is not present"};
   }
 }
 //--------------------------------- Find parent -------------------------------------//

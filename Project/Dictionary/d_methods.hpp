@@ -5,6 +5,8 @@
 #include<cmath>
 #include<utility>
 
+//#include"../B+Tree/BPTree.hpp"
+
 void Dictionary::setOffsets(){
   auto ptr = dptr;
   dicOffsets.resize(terms);
@@ -44,5 +46,6 @@ int Dictionary::findTerm(std::string& term, int& index){
       return 1; //term found
     }
   }
+  throw TermNotFound{"The term " + term + " is not present"};
   return -1; //term not found
 }
