@@ -28,16 +28,6 @@ private:
   /** Inverted index. */
   I invertedIndex;
 
-  /**
-   *\brief Function used to generate a list having the form [0, 1, ..., maxDocID-1], useful in NOT queries. 
-   */
-  void generateAllList(LinkedList& all){
-    //populate all
-    for(int i=0; i<=this->maxDocID; i++){
-      all.insert(i, method::push_back);
-    }
-  }
-
 public:
 
   /**

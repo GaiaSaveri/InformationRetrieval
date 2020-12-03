@@ -104,21 +104,10 @@ public:
    *\param u list containig the union.
    */
   void union_list(const List& l, List& u);
-  /**
-   *\brief function to got all elements of the current list except the ones in the input list.
-   *\param l list containing the values we want to exclude.
-   *\param d list containing the "difference" if the two lists.
-   */
-  void difference(const List& l, List& d);
 
-  void listToVector(std::vector<T>& v){
-    auto temp = head.get();
-    while(temp->next){
-      v.push_back(temp->value);
-      temp = temp->next.get();
-    }
-    v.push_back(temp->value);
-  }
+  void complement(List& c, T min, T max);
+
+  void andnot(const List& l, List& a);
 
   /**
    *\brief overload of the operator << to visualize the linked list
@@ -318,26 +307,47 @@ void List<T>::union_list(const List& l, List& u){
 }
 
 template<class T>
-void List<T>::difference(const List& l, List& d){
+void List<T>::complement(List& c, T min, T max){
+  auto tmp = this->head.get();
+  T v;
+  while(tmp){
+    v = tmp->value;
+    while(min<v){
+      c.insert(min, method::push_back);
+      min++;
+    }
+    min = v + 1;
+    tmp = tmp->next.get();
+  }
+  while(min<=max){
+    c.insert(min, method::push_back);
+    min++;
+  }
+}
+
+template<class T>
+void List<T>::andnot(const List& l, List& a){
   auto tmp1 = this->head.get();
   auto tmp2 = l.head.get();
   T v1, v2;
   while(tmp1 && tmp2){
     v1 = tmp1->value;
     v2 = tmp2->value;
-    if(v1==v2) {
+    if(v1==v2){
+      //u.insert(v1, method::push_back);
       tmp1 = tmp1->next.get();
       tmp2 = tmp2->next.get();
-    } else if(v1<v2){
-      d.insert(v1, method::push_back);
+    } else if(v1<v2) {
+      a.insert(v1, method::push_back);
       tmp1 = tmp1->next.get();
     } else if(v1>v2){
+      //u.insert(v2, method::push_back);
       tmp2 = tmp2->next.get();
     }
   }
   while(tmp1){
     v1 = tmp1->value;
-    d.insert(v1, method::push_back);
+    a.insert(v1, method::push_back);
     tmp1 = tmp1->next.get();
   }
 }

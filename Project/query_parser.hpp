@@ -61,14 +61,10 @@ void QueryParser<IRS>::queryToTokens(std::vector<std::string>& tokens){
 
 template<typename IRS>
 void QueryParser<IRS>::notQuery(std::string& term1, typename QueryParser<IRS>::LinkedList& result, typename QueryParser<IRS>::IR& ir){
-  LinkedList all{}; //list containing all docID
   LinkedList list1{};
   //list of posintgs associated to term1
   ir.invertedIndex.getPostingList(term1, list1);
-  //populate all
-  ir.generateAllList(all);
-  //difference between all and list1
-  all.difference(list1, result);
+  list1.complement(result, 0, ir.getMaxDocID());
 }
 
 template<typename IRS>
@@ -80,17 +76,13 @@ void QueryParser<IRS>::answerQuery(typename QueryParser<IRS>::LinkedList& list1,
   else if(op.compare("OR") == 0){
     list1.union_list(list2, result);
   }
-  else { //"AND NOT" or "OR NOT"
-    LinkedList all{};
-    ir.generateAllList(all);
+  else if(op.compare("ANDNOT") == 0) {
+    list1.andnot(list2, result);
+  }
+  else{ //OR NOT
     LinkedList diff{};
-    all.difference(list2, diff);
-    if(op.compare("ANDNOT") == 0){
-      list1.intersection(diff, result);
-    }
-    else if(op.compare("ORNOT") == 0){
-      list1.union_list(diff, result);
-    }
+    list2.complement(diff, 0, ir.getMaxDocID());
+    list1.union_list(diff, result);
   }
 }
 
