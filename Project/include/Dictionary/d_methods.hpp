@@ -5,8 +5,6 @@
 #include<cmath>
 #include<utility>
 
-//#include"../B+Tree/BPTree.hpp"
-
 void Dictionary::setOffsets(){
   auto ptr = dptr;
   dicOffsets.resize(terms);

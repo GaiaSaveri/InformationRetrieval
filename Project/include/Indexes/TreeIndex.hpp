@@ -8,7 +8,7 @@
 #define __TREEINDEX_
 
 #include"Document.hpp"
-#include"B+Tree/BPTree.hpp"
+#include"../B+Tree/BPTree.hpp"
 #include"file_utils.hpp"
 
 struct TreeIndex{
@@ -25,8 +25,8 @@ struct TreeIndex{
    *Otherwise the index is built from scratch, starting from the corpus.
    */
   TreeIndex(){
-    std::string dictionary = "files/dictionary.txt";
-    std::string posting_lists = "files/posting_lists.txt";
+    std::string dictionary = "../files/dictionary.txt";
+    std::string posting_lists = "../files/posting_lists.txt";
     if(exists(dictionary) && exists(posting_lists)){
       //dictionary and posting lists are already saved
       //assuming that we have both or none
@@ -44,7 +44,7 @@ struct TreeIndex{
       }
       else { //need to built the tree from scratch
         std::vector<std::string> filenames;
-        std::string dirname = "data/documents/";
+        std::string dirname = "../data/documents/";
         buildFromScratch(filenames, dirname);
         saveIndex();
       }

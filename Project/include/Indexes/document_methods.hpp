@@ -4,8 +4,8 @@
 #include<vector>
 #include<set>
 #include<algorithm>
-#include<cctype> //?
-#include<dirent.h> //?
+#include<cctype>
+#include<dirent.h>
 
 #include"document_utils.hpp" //normalize, stemming
 
@@ -46,7 +46,7 @@ void Document::documentPreprocessing(std::vector<std::string>& words, std::strin
   //std::ofstream file;
   //file.open("data/words.txt", std::ios::app);
   //for(auto x : words) file<<x<<"\n";
-  std::string fileStopWords = "data/stopwords";
+  std::string fileStopWords = "../data/stopwords";
   std::vector<std::string> stopwords;
   removeStopWords(words, stopwords, fileStopWords);
   stemming(words);

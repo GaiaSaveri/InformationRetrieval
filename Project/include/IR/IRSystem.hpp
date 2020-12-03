@@ -7,8 +7,8 @@
 #ifndef __IRSYSTEM_
 #define __IRSYSTEM_
 
-#include"file_utils.hpp"
-#include"TreeIndex.hpp"
+#include"../Indexes/file_utils.hpp"
+#include"../Indexes/TreeIndex.hpp"
 /**
  *\tparam I Type on the inverted index (either FileIndex or TreeIndex).
  */
@@ -34,7 +34,7 @@ public:
    *\brief Default constructor.
    */
   IRSystem() : invertedIndex{} {
-    corpus = "data/documents/";
+    corpus = "../data/documents/";
     maxDocID = countFiles(corpus) - 1;
   }
   /**

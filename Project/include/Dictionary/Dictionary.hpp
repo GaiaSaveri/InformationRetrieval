@@ -7,16 +7,9 @@
 #ifndef __DICTIONARY_
 #define __DICTIONARY_
 
-#include"../FileIndex.hpp"
-#include"../TreeIndex.hpp"
-#include"../file_utils.hpp"
-
-/**
-struct TermNotFound{
-  std::string message;
-  TermNotFound(const std::string& m) : message{m} {}
-};
-*/
+#include"../Indexes/FileIndex.hpp"
+#include"../Indexes/TreeIndex.hpp"
+#include"../Indexes/file_utils.hpp"
 
 struct Dictionary{
   /** Name of the file containing the uncompressed dictionary */
@@ -36,7 +29,7 @@ struct Dictionary{
    *(this will produce also the file containing the posting lists).
    */
   Dictionary() {
-    dictName = "files/dictionary.txt";
+    dictName = "../files/dictionary.txt";
     if(!exists(dictName)){
       //build dictionary (and posting lists) using B+Tree
       TreeIndex index{};
@@ -44,7 +37,7 @@ struct Dictionary{
     dptr = fileToDisk<char>(dictName);
     terms = countLinesFile(dictName);
     setOffsets();
-    std::string offFile = "files/dict_offsets.txt";
+    std::string offFile = "../files/dict_offsets.txt";
     vectorToFile(offFile, dicOffsets);
   }
   /**

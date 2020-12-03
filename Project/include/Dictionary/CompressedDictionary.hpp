@@ -7,7 +7,7 @@
 #ifndef __COMPRESSEDDICTIONARY_
 #define __COMPRESSEDDICTIONARY_
 
-#include"../file_utils.hpp"
+#include"../Indexes/file_utils.hpp"
 #include"Dictionary.hpp"
 
 struct CompressedDictionary : public Dictionary{
@@ -29,8 +29,8 @@ struct CompressedDictionary : public Dictionary{
    * Otherwise they are created from scratch (and saved).
    */
   CompressedDictionary() : Dictionary{} {
-    compName = "files/compressed_dictionary.txt";
-    std::string offFile = "files/compressed_dict_offsets";
+    compName = "../files/compressed_dictionary.txt";
+    std::string offFile = "../files/compressed_dict_offsets";
     k = 8;
     if(exists(compName) && exists(offFile)){ //compress dictionary already exists
       fileToVector(offFile, offsets);

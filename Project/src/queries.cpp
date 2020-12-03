@@ -1,12 +1,12 @@
 #include<chrono>
 
-#include"FileIndex.hpp"
-#include"TreeIndex.hpp"
-#include"Dictionary/CompressedDictionary.hpp"
-#include"PostingLists/CompressedPostings.hpp"
-#include"IRSystem.hpp"
-#include"file_utils.hpp"
-#include"QueryParser.hpp"
+#include"../include/Indexes/FileIndex.hpp"
+#include"../include/Indexes/TreeIndex.hpp"
+#include"../include/Dictionary/CompressedDictionary.hpp"
+#include"../include/PostingLists/CompressedPostings.hpp"
+#include"../include/IR/IRSystem.hpp"
+#include"../include/Indexes/file_utils.hpp"
+#include"../include/IR/QueryParser.hpp"
 
 
 
@@ -20,7 +20,7 @@ int main(){
 
   /* correctness test for simple query */
 
-  std::ifstream file("data/simple_queries.txt");
+  std::ifstream file("../data/simple_queries.txt");
   std::string line;
   int i = 1;
   double total1 = 0;
@@ -33,7 +33,7 @@ int main(){
   std::vector<int> v4;
   double total5 = 0;
   std::vector<int> v5;
-  /**
+
   while(std::getline(file, line)){
     auto begin1 = std::chrono::high_resolution_clock::now();
     List<int> l1 = ir1.answer_query(line);
@@ -82,8 +82,8 @@ int main(){
   std::cout<<total5/(double)1000<<std::endl;
 
   /** correctness test for complex queries */
-
-  std::ifstream file1("data/complex_queries.txt");
+/**
+  std::ifstream file1("../data/complex_queries.txt");
   i = 1;
   while(std::getline(file1, line)){
     List<int> l1 = ir1.answer_query(line);
@@ -111,4 +111,5 @@ int main(){
   }
 
   std::cout<<"\n"<<i<<std::endl;
+*/
 }

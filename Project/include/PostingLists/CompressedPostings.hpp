@@ -7,7 +7,7 @@
 #ifndef __COMPRESSEDPOSTINGS_
 #define __COMPRESSEDPOSTINGS_
 
-#include"../file_utils.hpp"
+#include"../Indexes/file_utils.hpp"
 #include"Postings.hpp"
 
 struct CompressedPostings : public Postings{
@@ -26,8 +26,8 @@ struct CompressedPostings : public Postings{
    * Otherwise they are created from scratch (and saved).
    */
   CompressedPostings() : Postings{}{
-    postCompName = "files/compressed_posting_list.txt";
-    std::string offFile = "files/compressed_post_offsets";
+    postCompName = "../files/compressed_posting_list.txt";
+    std::string offFile = "../files/compressed_post_offsets";
     if(exists(postCompName) && exists(offFile)){
       //file is present, only need to set the offsets
       fileToVector(offFile, compPostingOffsets);

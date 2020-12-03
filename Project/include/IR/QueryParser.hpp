@@ -7,8 +7,8 @@
 #ifndef __QUERYPARSER_
 #define __QUERYPARSER_
 
-#include"document_utils.hpp"
-#include"B+Tree/linkedlist.hpp"
+#include"../Indexes/document_utils.hpp"
+#include"../B+Tree/linkedlist.hpp"
 #include"IRSystem.hpp"
 
 /**

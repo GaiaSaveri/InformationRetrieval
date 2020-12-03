@@ -1,6 +1,6 @@
 #include<regex>
 
-#include"document_utils.hpp"
+#include"../Indexes/document_utils.hpp"
 
 //----------------------------- PREPROCESS QUERY -----------------------------//
 

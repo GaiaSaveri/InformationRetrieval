@@ -8,8 +8,8 @@
 #ifndef __FILEINDEX_
 #define __FILEINDEX_
 
-#include"B+Tree/linkedlist.hpp"
-#include"B+Tree/BPTree.hpp"
+#include"../B+Tree/linkedlist.hpp"
+#include"../B+Tree/BPTree.hpp"
 
 /**
  *\taparam D Type of dictionary (either Dictionary or CompressedDictionary).

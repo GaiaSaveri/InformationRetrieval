@@ -1,12 +1,12 @@
 #include<chrono>
 
-#include"FileIndex.hpp"
-#include"TreeIndex.hpp"
-#include"Dictionary/CompressedDictionary.hpp"
-#include"PostingLists/CompressedPostings.hpp"
-#include"IRSystem.hpp"
-#include"file_utils.hpp"
-#include"QueryParser.hpp"
+#include"../include/Indexes/FileIndex.hpp"
+#include"../include/Indexes/TreeIndex.hpp"
+#include"../include/Dictionary/CompressedDictionary.hpp"
+#include"../include/PostingLists/CompressedPostings.hpp"
+#include"../include/IR/IRSystem.hpp"
+#include"../include/Indexes/file_utils.hpp"
+#include"../include/IR/QueryParser.hpp"
 
 //reported here for convenience
 void readTerm(std::string& term, char* &dptr){
@@ -18,6 +18,13 @@ void readTerm(std::string& term, char* &dptr){
 }
 
 int main(){
+  //std::ifstream file("../../files/dictionary.txt");
+  //std::string line;
+  //while(std::getline(file, line)){
+    //std::cout<<line<<std::endl;
+  //}
+  std::string file = "../files/dictionary.txt";
+  std::cout<<exists(file)<<std::endl;
   //IRSystem<FileIndex<CompressedDictionary, CompressedPostings>> ir{};
 
   /** testing time to retrieve terms and posting lists */
