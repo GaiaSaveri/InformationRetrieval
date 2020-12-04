@@ -15,11 +15,11 @@ typename BPTree<Tk,Tv>::Node* BPTree<Tk,Tv>::searchLeaf(Tk key){
   } else {
     Node* current = root.get();
     while(!current->leaf){
-      int idx = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
+      size_t idx = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
       current = current->children.at(idx).get();
     }
 
-    int idx = std::lower_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
+    size_t idx = std::lower_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
 
     if(idx == current->keys.size() || current->keys.at(idx)!=key){
       return nullptr;
@@ -76,15 +76,15 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
     LinkedList* l = new LinkedList{};
     l->insert(value, method::push_back);
     //now current node is a leaf node
-    if(current->keys.size()<branchingFactor) { //leaf is not full
+    if((int)current->keys.size()<branchingFactor) { //leaf is not full
       //need to find the position where to insert the key
-      int i = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
+      size_t i = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
       //insert at the end (to increase the size)
       current->keys.push_back(key);
       current->values.push_back(l);
       //need to insert at position i
       if(i!=current->keys.size() - 1) {
-        for(int j = current->keys.size()-1; j>i; j--) {
+        for(size_t j = current->keys.size()-1; j>i; j--) {
           //shifting
           current->keys.at(j) = current->keys.at(j-1);
           current->values.at(j) = std::move(current->values.at(j-1));
@@ -96,14 +96,14 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
       std::vector<Tk> fakeNode(current->keys);
       std::vector<LinkedList*> fakeNodeValues(current->values);
       //find "theorical" place for the new key
-      int i = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
+      size_t i = std::upper_bound(current->keys.begin(), current->keys.end(), key) - current->keys.begin();
       //create space
       fakeNode.push_back(key);
       fakeNodeValues.push_back(l);
 
       //insert in correct position
       if(i!=fakeNode.size()-1) {
-        for(int j=fakeNode.size()-1; j>i; j--) {
+        for(size_t j=fakeNode.size()-1; j>i; j--) {
           fakeNode.at(j) = fakeNode.at(j-1);
           fakeNodeValues.at(j) = std::move(fakeNodeValues.at(j-1));
         }
@@ -129,7 +129,7 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
         current->values.push_back(fakeNodeValues.at(i));
       }
 
-      for(int i=(branchingFactor)/2+1; i<fakeNode.size(); i++) {
+      for(size_t i=(branchingFactor)/2+1; i<fakeNode.size(); i++) {
         newLeaf->keys.push_back(fakeNode.at(i));
         newLeaf->values.push_back(fakeNodeValues.at(i));
       }
@@ -149,8 +149,8 @@ void BPTree<Tk,Tv>::insertFirst(Tk key, Tv value){
 //------------------------------- Insert Internal --------------------------------------//
 template<class Tk, class Tv>
 void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node* parent, typename BPTree<Tk,Tv>::Node** child) {
-  if((parent)->keys.size()<branchingFactor-1){ //parent is not full
-    int i = std::upper_bound((parent)->keys.begin(), (parent)->keys.end(), key) - (parent)->keys.begin();
+  if((int)(parent)->keys.size()<branchingFactor-1){ //parent is not full
+    size_t i = std::upper_bound((parent)->keys.begin(), (parent)->keys.end(), key) - (parent)->keys.begin();
     //make space
     (parent)->keys.push_back(key);
     (parent)->children.resize((parent)->children.size()+1);
@@ -159,11 +159,11 @@ void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node* parent,
 
     if(i!=(parent)->keys.size()-1) {
       //shifting keys
-      for(int j=(parent)->keys.size()-1; j>i; j--) {
+      for(size_t j=(parent)->keys.size()-1; j>i; j--) {
         (parent)->keys.at(j) = (parent)->keys.at(j-1);
       }
       //shifiting pointers
-      for(int j=(parent)->children.size()-1; j>(i+1); j--) {
+      for(size_t j=(parent)->children.size()-1; j>(i+1); j--) {
         (parent)->children.at(j).release();
         (parent)->children.at(j).reset((parent)->children.at(j-1).release());
       }
@@ -176,19 +176,19 @@ void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node* parent,
       std::vector<Tk> fakeNode((parent)->keys);
       std::vector<Node*> fakeNodeChildren;
 
-      for(int i=0; i<(parent)->children.size(); i++){
+      for(size_t i=0; i<(parent)->children.size(); i++){
         fakeNodeChildren.push_back((parent)->children.at(i).get());
       }
       //find position for the key
-      int i = std::upper_bound((parent)->keys.begin(), (parent)->keys.end(), key) - (parent)->keys.begin();
+      size_t i = std::upper_bound((parent)->keys.begin(), (parent)->keys.end(), key) - (parent)->keys.begin();
       fakeNode.push_back(key);
       fakeNodeChildren.push_back((*child));
 
       if(i!=fakeNode.size()-1){
-        for(int j=fakeNode.size()-1; j>i; j--){
+        for(size_t j=fakeNode.size()-1; j>i; j--){
           fakeNode.at(j) = fakeNode.at(j-1);
         }
-        for(int j=fakeNodeChildren.size()-1; j>(i+1); j--){
+        for(size_t j=fakeNodeChildren.size()-1; j>(i+1); j--){
           fakeNodeChildren.at(j) = fakeNodeChildren.at(j-1);
         }
         //insert in right position
@@ -215,12 +215,12 @@ void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node* parent,
       }
 
       Node* newNode = new Node(false);
-      for(int i=partitionIdx+1; i<fakeNode.size(); i++){
+      for(size_t i=partitionIdx+1; i<fakeNode.size(); i++){
         newNode->keys.push_back(fakeNode.at(i));
       }
 
-      if((parent)->children.size()>partitionIdx+1){
-        for(int i=partitionIdx+1; i<(parent)->children.size(); i++){
+      if((int)(parent)->children.size()>partitionIdx+1){
+        for(size_t i=partitionIdx+1; i<(parent)->children.size(); i++){
           (parent)->children.at(i).release();
           (parent)->children.at(i).reset();
         }
@@ -230,7 +230,7 @@ void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node* parent,
       newNode->children.resize(fakeNodeChildren.size()-(partitionIdx+1));
       newNode->children.reserve(fakeNodeChildren.size()-(partitionIdx+1));
 
-      for(int i=0; i<newNode->children.size(); i++){
+      for(size_t i=0; i<newNode->children.size(); i++){
         newNode->children.at(i).reset(fakeNodeChildren.at(i+partitionIdx+1));
       }
 
@@ -275,7 +275,7 @@ void BPTree<Tk, Tv>::writeOnFile(){
   if(dictionary.is_open() && posting_lists.is_open()){
     Node* firstLeaf = root.get()->leftLeaf();
     while(firstLeaf){
-      for(int i=0; i<firstLeaf->keys.size(); i++){
+      for(size_t i=0; i<firstLeaf->keys.size(); i++){
         //write on dictionary the key
         dictionary<<firstLeaf->keys.at(i)<<"\n";
         //write on posting_lists the values

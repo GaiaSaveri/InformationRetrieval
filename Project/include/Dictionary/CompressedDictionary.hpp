@@ -29,8 +29,8 @@ struct CompressedDictionary : public Dictionary{
    * Otherwise they are created from scratch (and saved).
    */
   CompressedDictionary() : Dictionary{} {
-    compName = "../files/compressed_dictionary.txt";
-    std::string offFile = "../files/compressed_dict_offsets";
+    compName = "files/compressed_dictionary.txt";
+    std::string offFile = "files/compressed_dict_offsets";
     k = 8;
     if(exists(compName) && exists(offFile)){ //compress dictionary already exists
       fileToVector(offFile, offsets);
@@ -81,10 +81,10 @@ struct CompressedDictionary : public Dictionary{
   /**
    *\brief Find the block theoritically containing a term by binary searching the compressed dictionary
    *\param term Term we want to find inside the compressed dictionary.
-   *\return int Index of the block (eventually) containing the block
+   *\return size_t Index of the block (eventually) containing the block
    *(we may later discover that the term is not in the dictionary).
    */
-  int findBlock(std::string& term);
+  size_t findBlock(std::string& term);
   /**
    *\brief Read a block of compressed terms.
    *\param ptr Pointer to the beginning of the block in the compressed dictionary file.

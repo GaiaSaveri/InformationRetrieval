@@ -52,18 +52,18 @@ void CompressedPostings::compressPostings(){
     computeGaps(l, gaps);
     int currentOffset = 0;
     //encode gaps
-    for(int j=0; j<gaps.size(); j++){
+    for(size_t j=0; j<gaps.size(); j++){
       std::vector<unsigned char> coded;
       VBencoder(coded, gaps.at(j));
       currentOffset += coded.size(); //byte needed for the i-th gap
-      for(int k=0; k<coded.size(); k++)
+      for(size_t k=0; k<coded.size(); k++)
         file.write((char*)&coded.at(k), sizeof(unsigned char));
     }
     //number of bytes occupied by the i-th posting list
     compPostingOffsets.at(i+1) = currentOffset;
   }
   //prefix sum of compPostingOffsets
-  for(int i=1; i<compPostingOffsets.size(); i++){
+  for(size_t i=1; i<compPostingOffsets.size(); i++){
     compPostingOffsets.at(i) += compPostingOffsets.at(i-1);
   }
   file.close();
@@ -105,7 +105,7 @@ void CompressedPostings::findPostingList(int i, List<int>& postings){
     gaps.push_back(current);
   }
   postings.insert(gaps.at(0), method::push_back);
-  for(int i=1; i<gaps.size(); i++){
+  for(size_t i=1; i<gaps.size(); i++){
     gaps.at(i) += gaps.at(i-1);
     postings.insert(gaps.at(i), method::push_back);
   }

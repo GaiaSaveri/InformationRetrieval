@@ -26,10 +26,10 @@ struct Postings{
    *is not present, it is built via the B+tree, which produces the file containing the posting lists as well.
    */
   Postings(){
-    postName = "../files/posting_lists.txt";
+    postName = "files/posting_lists.txt";
     plptr = fileToDisk<char>(postName);
     setOffsets();
-    std::string offFile = "../files/post_offsets.txt";
+    std::string offFile = "files/post_offsets.txt";
     vectorToFile(offFile, postOffsets);
   }
   /**

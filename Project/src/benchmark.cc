@@ -1,12 +1,12 @@
 #include<chrono>
 
-#include"../include/Indexes/FileIndex.hpp"
-#include"../include/Indexes/TreeIndex.hpp"
-#include"../include/Dictionary/CompressedDictionary.hpp"
-#include"../include/PostingLists/CompressedPostings.hpp"
-#include"../include/IR/IRSystem.hpp"
-#include"../include/Indexes/file_utils.hpp"
-#include"../include/IR/QueryParser.hpp"
+#include"Indexes/FileIndex.hpp"
+#include"Indexes/TreeIndex.hpp"
+#include"Dictionary/CompressedDictionary.hpp"
+#include"PostingLists/CompressedPostings.hpp"
+#include"IR/IRSystem.hpp"
+#include"Indexes/file_utils.hpp"
+#include"IR/QueryParser.hpp"
 
 //reported here for convenience
 void readTerm(std::string& term, char* &dptr){
@@ -23,12 +23,12 @@ int main(){
   //while(std::getline(file, line)){
     //std::cout<<line<<std::endl;
   //}
-  std::string file = "../files/dictionary.txt";
-  std::cout<<exists(file)<<std::endl;
-  //IRSystem<FileIndex<CompressedDictionary, CompressedPostings>> ir{};
+  //std::string file = "files/dictionary.txt";
+  //std::cout<<exists(file)<<std::endl;
+  IRSystem<FileIndex<CompressedDictionary, CompressedPostings>> ir{};
 
   /** testing time to retrieve terms and posting lists */
-  /*
+
   std::string dicName = "files/dictionary.txt";
   char* dptr = fileToDisk<char>(dicName);
   std::vector<int> off;
@@ -42,8 +42,8 @@ int main(){
 
   //5 runs for each test, to average results
   for(int i=1; i<=5; i++){
-    file1.open("test/compress_24_dict_" + std::to_string(i)+".txt");
-    file2.open("test/compress_post_" + std::to_string(i)+".txt");
+    //file1.open("test/compress_24_dict_" + std::to_string(i)+".txt");
+    //file2.open("test/compress_post_" + std::to_string(i)+".txt");
     //search n terms at a time
     for(int n=50; n<10000; n+=50){
       double total1 = 0;
@@ -52,6 +52,7 @@ int main(){
         auto ptr = dptr + off.at(j);
         std::string term;
         readTerm(term, ptr);
+        std::cout<<term<<std::endl;
         int index;
         auto begin1 = std::chrono::high_resolution_clock::now();
         index1.dictionary.findTerm(term, index);
@@ -63,14 +64,14 @@ int main(){
         auto end2 = std::chrono::high_resolution_clock::now();
         total2 += std::chrono::duration_cast<std::chrono::microseconds>(end2-begin2).count();
       }
-      file1 << total1/n << "\n";
-      file2 << total2/n << "\n";
+      //file1 << total1/n << "\n";
+      //file2 << total2/n << "\n";
     }
-    file1.close();
-    file2.close();
+    //file1.close();
+    //file2.close();
   }
 
-
+/**
   FileIndex<Dictionary, Postings> index2{};
   for(int i=1; i<=5; i++){
     file1.open("test/dict_" + std::to_string(i)+".txt");

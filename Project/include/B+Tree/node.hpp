@@ -99,7 +99,7 @@ node<k,v>* node<k,v>::leftLeaf(){
     return this;
   }
   //current is not a leaf --> it has pointers to children
-  for(int i=0; i<this->children.size(); i++){
+  for(size_t i=0; i<this->children.size(); i++){
     if(this->children.at(i).get()){ //it is not nullptr
       return this->children.at(i).get()->leftLeaf();
     }

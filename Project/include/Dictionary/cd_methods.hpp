@@ -27,7 +27,7 @@ void CompressedDictionary::frontCodingBlock(int& currentOffset, std::vector<std:
   //the length of a string is the number of actual bytes it occupies
   currentOffset = 1 + block.at(0).length();
   //write all other terms with length and length of the prefix
-  for(int i=1; i<block.size(); i++){
+  for(size_t i=1; i<block.size(); i++){
     unsigned char prefix = 0; //length of the current prefix
     std::string suffix = ""; //suffix of the current term
     //compute prefix
@@ -83,7 +83,7 @@ void CompressedDictionary::compressDictionary(){
     termBlock.clear();
   }
   //prefix sum of the offsets
-  for(int i=1; i<offsets.size(); i++){
+  for(size_t i=1; i<offsets.size(); i++){
     offsets.at(i) += offsets.at(i-1);
   }
   file.close();
@@ -106,11 +106,11 @@ std::string CompressedDictionary::readFirst(unsigned char* &cdptr){
 }
 
 //find the block that should contain the term
-int CompressedDictionary::findBlock(std::string& term){
-  int beginning = 0;
-  int end = offsets.size()-1;
+size_t CompressedDictionary::findBlock(std::string& term){
+  size_t beginning = 0;
+  size_t end = offsets.size()-1;
   while(beginning<=end){
-    int mid = (beginning+end)/2;
+    size_t mid = (beginning+end)/2;
     unsigned char* midPtr = cdptr + offsets.at(mid);
     std::string midTerm = readFirst(midPtr);
     if(mid!=offsets.size()-1){ //if I can check mid+1
@@ -165,8 +165,8 @@ void CompressedDictionary::readBlockCompressed(unsigned char* &cdptr, int k, std
 
 //find the term (if present) inside the compressed dictionary
 int CompressedDictionary::findTerm(std::string& term, int& index){
-  int b = findBlock(term);
-  if(b==-1) return b; //unsuccessful binary search
+  size_t b = findBlock(term);
+  if((int)b==-1) return b; //unsuccessful binary search
   else { //term present
     unsigned char* blockBegin = cdptr + offsets.at(b);
     std::vector<std::string> termBlock;
@@ -175,7 +175,7 @@ int CompressedDictionary::findTerm(std::string& term, int& index){
     }
     else readBlockCompressed(blockBegin, k, termBlock);
     //linear scanning the block
-    int i = 0;
+    size_t i = 0;
     bool found = 0;
     while(!found && i<termBlock.size()){
       if(termBlock.at(i) == term) found = 1;

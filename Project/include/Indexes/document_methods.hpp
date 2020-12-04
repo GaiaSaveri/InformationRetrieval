@@ -25,7 +25,7 @@ void Document::removeStopWords(std::vector<std::string>& words, std::vector<std:
   //read all the stopwords inside a vector called stopwords
   readFile(stopwords, fileStopWords);
   //loop across all stopwords
-  for(int i=0; i<stopwords.size(); i++){
+  for(size_t i=0; i<stopwords.size(); i++){
       words.erase(std::remove(words.begin(), words.end(), stopwords.at(i)), words.end());
     }
 }
@@ -46,7 +46,7 @@ void Document::documentPreprocessing(std::vector<std::string>& words, std::strin
   //std::ofstream file;
   //file.open("data/words.txt", std::ios::app);
   //for(auto x : words) file<<x<<"\n";
-  std::string fileStopWords = "../data/stopwords";
+  std::string fileStopWords = "data/stopwords";
   std::vector<std::string> stopwords;
   removeStopWords(words, stopwords, fileStopWords);
   stemming(words);

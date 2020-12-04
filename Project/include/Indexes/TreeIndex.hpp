@@ -25,8 +25,8 @@ struct TreeIndex{
    *Otherwise the index is built from scratch, starting from the corpus.
    */
   TreeIndex(){
-    std::string dictionary = "../files/dictionary.txt";
-    std::string posting_lists = "../files/posting_lists.txt";
+    std::string dictionary = "files/dictionary.txt";
+    std::string posting_lists = "files/posting_lists.txt";
     if(exists(dictionary) && exists(posting_lists)){
       //dictionary and posting lists are already saved
       //assuming that we have both or none
@@ -44,7 +44,7 @@ struct TreeIndex{
       }
       else { //need to built the tree from scratch
         std::vector<std::string> filenames;
-        std::string dirname = "../data/documents/";
+        std::string dirname = "data/documents/";
         buildFromScratch(filenames, dirname);
         saveIndex();
       }
@@ -61,9 +61,9 @@ struct TreeIndex{
    */
   void buildFromScratch(std::vector<std::string>& filenames, std::string& dirname){
     readFolder(filenames, dirname);
-    for(int i=0; i<filenames.size(); i++){
-      Document d{i, filenames.at(i)};
-      for(int j=0; j<d.doc.second.size(); j++)
+    for(size_t i=0; i<filenames.size(); i++){
+      Document d{static_cast<int>(i), filenames.at(i)};
+      for(size_t j=0; j<d.doc.second.size(); j++)
         index.insert(d.doc.second.at(j), i);
     }
   }

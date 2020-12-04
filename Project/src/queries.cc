@@ -1,12 +1,12 @@
 #include<chrono>
 
-#include"../include/Indexes/FileIndex.hpp"
-#include"../include/Indexes/TreeIndex.hpp"
-#include"../include/Dictionary/CompressedDictionary.hpp"
-#include"../include/PostingLists/CompressedPostings.hpp"
-#include"../include/IR/IRSystem.hpp"
-#include"../include/Indexes/file_utils.hpp"
-#include"../include/IR/QueryParser.hpp"
+#include"Indexes/FileIndex.hpp"
+#include"Indexes/TreeIndex.hpp"
+#include"Dictionary/CompressedDictionary.hpp"
+#include"PostingLists/CompressedPostings.hpp"
+#include"IR/IRSystem.hpp"
+#include"Indexes/file_utils.hpp"
+#include"IR/QueryParser.hpp"
 
 
 
@@ -20,7 +20,7 @@ int main(){
 
   /* correctness test for simple query */
 
-  std::ifstream file("../data/simple_queries.txt");
+  std::ifstream file("data/simple_queries.txt");
   std::string line;
   int i = 1;
   double total1 = 0;

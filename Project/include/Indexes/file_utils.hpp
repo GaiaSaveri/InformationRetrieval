@@ -29,7 +29,7 @@ bool exists(std::string& filename){
 //reverse content of a vector into a file
 void vectorToFile(std::string& filename, std::vector<int>& v){
   std::ofstream file(filename);
-  for(int i=0; i<v.size(); i++){
+  for(size_t i=0; i<v.size(); i++){
     file << v.at(i) << "\n";
   }
   file.close();
@@ -49,6 +49,7 @@ template<class T>
 T* fileToDisk(std::string& filename){
   int size = getFileSize(filename);
   int file = open(filename.c_str(), O_RDONLY, 0);
+  if(file == -1) std::cout<<"file not opened"<<std::endl;
   T* fp = (T*)mmap(NULL, size, PROT_READ, MAP_SHARED, file, 0);
   if(fp == MAP_FAILED) std::cout<<"mmap failed"<<std::endl;
   //T* ptr = reinterpret_cast<T*>(mmap(NULL, size, PROT_READ, MAP_FILE | MAP_SHARED, file, 0));
@@ -71,7 +72,7 @@ int countFiles(std::string& dirname){
   struct dirent *d;
   dp = opendir(dirname.c_str());
   if(dp!=nullptr){
-    while(d = readdir(dp)){
+    while((d = readdir(dp))){
       if(strcmp(d->d_name,".")!=0 && strcmp(d->d_name,"..")!=0)
         i++;
     }

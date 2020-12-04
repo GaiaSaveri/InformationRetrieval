@@ -11,7 +11,7 @@ void Postings::setOffsets(){
   auto ptr = plptr;
   postOffsets.resize(l);
   postOffsets.at(0) = 0;
-  for(int i=0; i<postOffsets.size()-1; i++){
+  for(size_t i=0; i<postOffsets.size()-1; i++){
     int k = 0;
     while(ptr[k]!='\n'){
       k++;
@@ -20,7 +20,7 @@ void Postings::setOffsets(){
     ptr = &ptr[k+1];
   }
   //prefix sum of the offsets
-  for(int i=1; i<postOffsets.size(); i++)
+  for(size_t i=1; i<postOffsets.size(); i++)
     postOffsets.at(i) += postOffsets.at(i-1);
 }
 

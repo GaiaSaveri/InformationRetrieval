@@ -17,7 +17,7 @@ void Dictionary::setOffsets(){
     ptr = &ptr[j+1];
   }
   //prefix sum
-  for(int i=1; i<dicOffsets.size(); i++)
+  for(size_t i=1; i<dicOffsets.size(); i++)
     dicOffsets.at(i) += dicOffsets.at(i-1);
 }
 

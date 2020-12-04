@@ -20,7 +20,7 @@ void QueryParser<IRS>::preprocessTokens(std::vector<std::string>& tokens){
   special.push_back("NOT");
   special.push_back("ANDNOT");
   special.push_back("ORNOT");
-  for(int i=0; i<tokens.size(); i++){
+  for(size_t i=0; i<tokens.size(); i++){
     if(std::find(special.begin(), special.end(), tokens.at(i)) == special.end()){
       //current token is a term
       terms.push_back(tokens.at(i));
@@ -32,7 +32,7 @@ void QueryParser<IRS>::preprocessTokens(std::vector<std::string>& tokens){
   //perform stemming on terms
   stemming(terms);
   //back to tokenized query, in the right positions given  by ind
-  for(int i=0; i<terms.size(); i++){
+  for(size_t i=0; i<terms.size(); i++){
     tokens.at(ind.at(i)) = terms.at(i);
   }
 }
@@ -95,7 +95,7 @@ void QueryParser<IRS>::answerSimpleQuery(std::vector<std::string>& tokens, typen
     notQuery(tokens.at(1), result, ir);
   }
   else ir.invertedIndex.getPostingList(tokens.at(0), result);
-  for(int i=start; i<tokens.size(); i+=2){
+  for(size_t i=start; i<tokens.size(); i+=2){
     LinkedList tmp2{}; //list of the current term
     ir.invertedIndex.getPostingList(tokens.at(i+1), tmp2);
     answerQuery(result, tmp2, tokens.at(i), tmp1, ir);
@@ -107,7 +107,7 @@ void QueryParser<IRS>::answerSimpleQuery(std::vector<std::string>& tokens, typen
 
 template<typename IRS>
 void QueryParser<IRS>::findParenthesis(std::vector<std::string>& tokens, std::vector<int>& parenthesis, std::string& p){
-  for(int i=0; i<tokens.size(); i++){
+  for(size_t i=0; i<tokens.size(); i++){
     if(tokens.at(i).compare(p)==0) parenthesis.push_back(i);
   }
 }
@@ -131,7 +131,7 @@ void QueryParser<IRS>::parseTotalQuery(std::vector<std::string>& tokens, std::ve
   findParenthesis(tokens, close, c);
   //find all subexpression indexes, parsing parenthesis' structure
   //traversing in order the open vector
-  for(int i=0; i<close.size(); i++){
+  for(size_t i=0; i<close.size(); i++){
     //treversing in reverse order the close vector
     for(int j=open.size()-1; j>=0; j--){
       if(close.at(i)>open.at(j)){
@@ -154,7 +154,7 @@ void QueryParser<IRS>::getListFromEscapeCharacter(std::string& currentTerm, std:
   if(currentTerm.find(subExprEscape) != std::string::npos){
     //need to search in subexpr result
     bool found = false;
-    int i = 0;
+    size_t i = 0;
     while(!found && i<currentQuery.size()){
       std::string e = "#";
       std::string currentEscape = e.append(std::to_string(i));
@@ -194,7 +194,7 @@ void QueryParser<IRS>::parsePartialQuery(std::vector<std::string>& currentQuery,
   currentQuery.erase(std::remove_if(currentQuery.begin(), currentQuery.end(),
     [](std::string s){return (s=="(" || s == ")");}), currentQuery.end());
   //adjust query
-  for(int i=0; i<currentQuery.size(); i++){
+  for(size_t i=0; i<currentQuery.size(); i++){
     std::string escapeTerm = "%";
     std::string currentEscapeTerm = escapeTerm.append(std::to_string(cList.size()));
   //if currentQuery.at(i) is an escape character
@@ -225,7 +225,7 @@ void QueryParser<IRS>::parsePartialQuery(std::vector<std::string>& currentQuery,
   }
   //handle escape characters
   else getListFromEscapeCharacter(currentQuery.at(0), currentQuery, subexprResults, cList, result, ir);
-  for(int i=start; i<currentQuery.size(); i+=2){
+  for(size_t i=start; i<currentQuery.size(); i+=2){
     LinkedList tmp2{}; //posting list of the current term
     //handle escape characters
     getListFromEscapeCharacter(currentQuery.at(i+1), currentQuery, subexprResults, cList, tmp2, ir);
@@ -257,7 +257,7 @@ typename QueryParser<IRS>::LinkedList QueryParser<IRS>::answer(typename QueryPar
     }
       //detect if it is an "independent" query or depends on partial results
       bool dependent = false;
-      int i = 0;
+      size_t i = 0;
       while(!dependent && i<currentQuery.size()){
         if(currentQuery.at(i).find("#") != std::string::npos){
           dependent = true;

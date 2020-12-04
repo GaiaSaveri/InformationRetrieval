@@ -34,7 +34,7 @@ public:
    *\brief Default constructor.
    */
   IRSystem() : invertedIndex{} {
-    corpus = "../data/documents/";
+    corpus = "data/documents/";
     maxDocID = countFiles(corpus) - 1;
   }
   /**

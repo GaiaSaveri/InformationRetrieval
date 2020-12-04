@@ -1,16 +1,16 @@
 //#include"query_parser.hpp"
 
-#include"TreeIndex.hpp"
+#include"Indexes/TreeIndex.hpp"
 #include<cstdlib>
 #include<ctime>
 
 int main(){
 
-  std::vector<std::string> filenames;
-  std::string dirname = "data/small/";
-  TreeIndex i{};
+  //std::vector<std::string> filenames;
+  //std::string dirname = "data/small/";
+  //TreeIndex i{};
 
-  i.printInvertedIndex();
+  //i.printInvertedIndex();
 
   //std::string dictionary = "files/dictionary.txt";
   //std::string posting_lists = "files/posting_lists.txt";

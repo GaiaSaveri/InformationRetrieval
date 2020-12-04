@@ -29,7 +29,7 @@ struct Dictionary{
    *(this will produce also the file containing the posting lists).
    */
   Dictionary() {
-    dictName = "../files/dictionary.txt";
+    dictName = "files/dictionary.txt";
     if(!exists(dictName)){
       //build dictionary (and posting lists) using B+Tree
       TreeIndex index{};
@@ -37,7 +37,7 @@ struct Dictionary{
     dptr = fileToDisk<char>(dictName);
     terms = countLinesFile(dictName);
     setOffsets();
-    std::string offFile = "../files/dict_offsets.txt";
+    std::string offFile = "files/dict_offsets.txt";
     vectorToFile(offFile, dicOffsets);
   }
   /**

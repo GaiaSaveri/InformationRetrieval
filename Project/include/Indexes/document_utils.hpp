@@ -21,7 +21,7 @@ void normalize(std::vector<std::string>& words){
   //e.g. "it's" = "it"
   std::string delimiter_2 = "'";
   size_t pos_2 = 0;
-  for(int i=0; i<words.size(); i++){
+  for(size_t i=0; i<words.size(); i++){
     //detect delimiter "-" and split if necessary
     while((pos_1 = words.at(i).find(delimiter_1)) != std::string::npos){
       tmp = words.at(i).substr(0,pos_1);
@@ -47,7 +47,7 @@ void normalize(std::vector<std::string>& words){
 
 //stemming, from https://bitbucket.org/smassung/porter2_stemmer/wiki/Home
 void stemming(std::vector<std::string>& words){
-  for(int i=0; i<words.size(); i++){
+  for(size_t i=0; i<words.size(); i++){
     Porter2Stemmer::stem(words.at(i));
   }
 }
