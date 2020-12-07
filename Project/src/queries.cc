@@ -5,8 +5,6 @@
 #include"Dictionary/CompressedDictionary.hpp"
 #include"PostingLists/CompressedPostings.hpp"
 #include"IR/IRSystem.hpp"
-#include"Indexes/file_utils.hpp"
-#include"IR/QueryParser.hpp"
 
 
 
@@ -68,6 +66,7 @@ int main(){
     if(v1==v2 && v2==v3 && v3==v4 && v4==v5){
       std::cout<<"IR systems agree on query: "<<line<<std::endl;
     }
+
     else {
       std::cout<<"Discrepancy"<<std::endl;
       i = 0;
@@ -82,7 +81,7 @@ int main(){
   std::cout<<total5/(double)1000<<std::endl;
 
   /** correctness test for complex queries */
-/**
+
   std::ifstream file1("../data/complex_queries.txt");
   i = 1;
   while(std::getline(file1, line)){
@@ -111,5 +110,4 @@ int main(){
   }
 
   std::cout<<"\n"<<i<<std::endl;
-*/
 }
