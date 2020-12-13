@@ -81,7 +81,7 @@ int CompressedPostings::VBdecoder(unsigned char* &ptr){
   shift += 7;
   ptr++;
   //read other bytes (if any)
-  while(currentByte & 0x80){ //as long as the continuation byte is 1
+  while(currentByte & 0x80){ //as long as the continuation bit is 1
     currentByte = *ptr; //advance pointer
     //read the part we are interested in
     number |= (currentByte & 0x7f) << shift;
