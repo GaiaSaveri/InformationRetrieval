@@ -12,13 +12,13 @@
 #include"../Indexes/file_utils.hpp"
 
 struct Dictionary{
-  /** Name of the file containing the uncompressed dictionary */
+  /** Name of the file containing the uncompressed dictionary. */
   std::string dictName;
-  /** Pointer to the beginning of the file on disk */
+  /** Pointer to the beginning of the file on disk. */
   char* dptr;
-  /** Number of terms in the dictionary */
+  /** Number of terms in the dictionary. */
   int terms;
-  /** Offsets in bytes to the beginning of each term in the file (the one pointed to by dptr) */
+  /** Offsets in bytes to the beginning of each term in the file (the one pointed to by dptr). */
   std::vector<int> dicOffsets;
   /**
    *\brief Default constructor.
@@ -52,7 +52,7 @@ struct Dictionary{
   void readTerm(std::string& term, char* &ptr);
   /**
    *\brief Find a term by binary-searching the file.
-   *\param term Term we are going to (eventually read).
+   *\param term Term we are going to (eventually) read.
    *\param index Index (in dicOffsets vector) of the starting byte of the term.
    *\return int It is 1 if the term has been found, -1 otherwise.
    */

@@ -11,11 +11,11 @@
 #include"../Indexes/FileIndex.hpp"
 
 struct Postings{
-  /** Name of the file containing the uncompressed posting lists */
+  /** Name of the file containing the uncompressed posting lists. */
   std::string postName;
-  /** Pointer to the beginning of the uncompressed posting lists file */
+  /** Pointer to the beginning of the uncompressed posting lists file. */
   char* plptr;
-  /** Number of bytes before the first byte of each posting list in the uncompressed file */
+  /** Number of bytes before the first byte of each posting list in the uncompressed file. */
   std::vector<int> postOffsets;
   /**
    *\brief Deafault constructor.

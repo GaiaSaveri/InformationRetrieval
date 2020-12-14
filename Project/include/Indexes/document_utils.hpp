@@ -17,8 +17,6 @@ void normalize(std::vector<std::string>& words){
   std::string delimiter_1 = "-";
   size_t pos_1 = 0;
   std::string tmp;
-  //in words with an apostroph we delete the apostroph and everything that follows
-  //e.g. "it's" = "it"
   std::string delimiter_2 = "'";
   size_t pos_2 = 0;
   for(size_t i=0; i<words.size(); i++){

@@ -52,7 +52,6 @@ T* fileToDisk(std::string& filename){
   if(file == -1) std::cout<<"file not opened"<<std::endl;
   T* fp = (T*)mmap(NULL, size, PROT_READ, MAP_SHARED, file, 0);
   if(fp == MAP_FAILED) std::cout<<"mmap failed"<<std::endl;
-  //T* ptr = reinterpret_cast<T*>(mmap(NULL, size, PROT_READ, MAP_FILE | MAP_SHARED, file, 0));
   return fp;
 }
 

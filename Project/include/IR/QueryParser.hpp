@@ -1,7 +1,7 @@
 /**
  *\file QueryParser.hpp
  *\author Gaia Saveri
- *\brief Class describing a naive query parser, i.e. a machinery to answer to boolean queries.
+ *\brief Class describing a naive query parser, i.e. a machinery to answer boolean queries.
  */
 
 #ifndef __QUERYPARSER_
@@ -44,7 +44,7 @@ private:
   void queryToTokens(std::vector<std::string>& tokens);
 
   /**
-   *\brief Function to answer a query of the form "NOT term".
+   *\brief Function to answer a query of the form "NOT term1".
    *\param term1 Term appearing in the formula "NOT term1".
    *\param result Linked List containing the DocIDs satisfying this query.
    *|param ir Information Retrieval System, to have access to the function "generateAllList".
@@ -60,7 +60,7 @@ private:
    */
   void answerQuery(LinkedList& list1, LinkedList& list2, std::string& op, LinkedList& result, IR& ir);
   /**
-   *\brief Function to answer a query which has not nested queries.
+   *\brief Function to answer a query which hasn't any nested queries.
    *\param tokens Tokens obtained by splitting the query.
    *\param result  Linked List containing the DocIDs satisfying this query.
    *\param ir Information Retrieval System, to have access to the function "getPostingList" of the inverted index.
@@ -97,7 +97,7 @@ private:
    *\param subexprResults Vector containing the results of the subexpressions so far computed.
    *\param cList Vector containing the posting lists associated to the terms present in the query.
    *\param result Linked List containing the posting list of the current term.
-   *|param ir Information Retrieval System, , to have access to the function "getPostingList" of the inverted index.
+   *|param ir Information Retrieval System, to have access to the function "getPostingList" of the inverted index.
    *
    *If the current term is encoded by #x, we need to search inside the vector subexprResult
    *at position x to get its posting list.
@@ -115,7 +115,7 @@ private:
    *\param subexprResults Vector containing the results of the subexpressions so far computed.
    *\param result Linked List containing the result of the current query.
    *\param cList Vector containing the posting lists associated to the terms present in the query.
-   *\param ir Information Retrieval System, , to have access to the function "getPostingList" of the inverted index.
+   *\param ir Information Retrieval System, to have access to the function "getPostingList" of the inverted index.
    *
    *Consider the query "a AND (b OR c)", this query contains a subquery which is (b OR c).
    *So first we will answer to the query "b OR c", then to the total query "a AND (b OR c)".
@@ -146,7 +146,7 @@ public:
   }
   /**
    *\brief Function used to identify the structure of a query and answer to it.
-   *\param ir Information Retrieval System form which the querie originated.
+   *\param ir Information Retrieval System from which the querie originated.
    */
   LinkedList answer(IR& ir);
   /**

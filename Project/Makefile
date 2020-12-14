@@ -29,6 +29,6 @@ $(MAIN): 	src/main.cc
 				$(CXX) -g $< -o $(MAIN) $(CXXFLAGS)
 
 clean:
-				rm -rf *.o html latex
+				rm -rf *.o *.o.dSYM html latex
 
 .PHONY: clean documentation

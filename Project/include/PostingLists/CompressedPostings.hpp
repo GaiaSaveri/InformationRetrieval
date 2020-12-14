@@ -1,7 +1,7 @@
 /**
  *\file CompressedPostings.hpp
  *\author Gaia Saveri
- *\brief Class describing the compressed posting lists. It is inherited from postings.
+ *\brief Class describing the compressed posting lists. It is inherited from Postings.
  */
 
 #ifndef __COMPRESSEDPOSTINGS_
@@ -11,11 +11,11 @@
 #include"Postings.hpp"
 
 struct CompressedPostings : public Postings{
-  /** Name of the file containing the compressed posting lists */
+  /** Name of the file containing the compressed posting lists. */
   std::string postCompName;
-  /** Number of bytes before the first byte of each posting list in the compressed file */
+  /** Number of bytes before the first byte of each posting list in the compressed file. */
   std::vector<int> compPostingOffsets;
-  /** Pointer to the beginning of the compressed posting lists file */
+  /** Pointer to the beginning of the compressed posting lists file. */
   unsigned char* cplptr;
 
   /**
@@ -55,12 +55,12 @@ struct CompressedPostings : public Postings{
    */
   void VBencoder(std::vector<unsigned char>& coded, int number);
   /**
-   *\brief Compress the whole posting lists file, using variable length encoding.
+   *\brief Compress the whole posting lists file, using variable byte encoding.
    */
   void compressPostings();
 
   /**
-   *\brief Function for uncompressing an integer coded via variable length encoding.
+   *\brief Function for uncompressing an integer coded via variable byte encoding.
    *\param ptr Pointer to the starting byte of the number we are going to uncompress
    *in the compressed posting lists file.
    */

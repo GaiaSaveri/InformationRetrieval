@@ -35,7 +35,6 @@ void CompressedPostings::VBencoder(std::vector<unsigned char>& coded, int number
 
 //compress the whole file
 void CompressedPostings::compressPostings(){
-  //std::ofstream file(filename, std::ios::binary | std::ofstream::app);
   std::ofstream file(postCompName, std::ios::binary | std::ofstream::app);
   int n = postOffsets.size(); //total number of posting lists
   //one more than total number of postings

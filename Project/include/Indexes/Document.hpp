@@ -1,7 +1,7 @@
 /**
  *\file Document.hpp
  *\author Gaia Saveri
- *\brief Class describing a document as composed by a DocID and a bag of words of terms.
+ *\brief Class describing a document as composed by a DocID and a set of words of terms.
  */
 
 #ifndef __DOCUMENT_
@@ -12,7 +12,7 @@
 #include"document_utils.hpp"
 
 struct Document{
-  /** The first component of the term represents the DocID, the second the bag of word sof terms. */
+  /** The first component of the term represents the DocID, the second the set of words of terms. */
   std::pair<int, std::vector<std::string>> doc;
   /**
    *\brief Default constructor.
@@ -21,11 +21,11 @@ struct Document{
   /**
    *\brief Custom custructor.
    *\param DocID Unique integer number associated to a term.
-   *\param bagOfWords Vector of strings, each representing a term in the document.
+   *\param setOfWords Vector of strings, each representing a term in the document.
    */
-  Document(int DocID, std::vector<std::string>& bagOfWords){
+  Document(int DocID, std::vector<std::string>& setOfWords){
     doc.first = DocID;
-    doc.second = std::move(bagOfWords);
+    doc.second = std::move(setOfWords);
   }
   /**
    *\brief Custom constructor.
@@ -37,9 +37,9 @@ struct Document{
    */
   Document(int DocID, std::string& filename){
     doc.first = DocID;
-    std::vector<std::string> bagOfWords;
-    documentPreprocessing(bagOfWords, filename);
-    doc.second = std::move(bagOfWords);
+    std::vector<std::string> setOfWords;
+    documentPreprocessing(setOfWords, filename);
+    doc.second = std::move(setOfWords);
   }
   /**
    *\brief Function that reads a file word by word (i.e. splitting on spaces).

@@ -18,13 +18,6 @@ void readTerm(std::string& term, char* &dptr){
 }
 
 int main(){
-  //std::ifstream file("../../files/dictionary.txt");
-  //std::string line;
-  //while(std::getline(file, line)){
-    //std::cout<<line<<std::endl;
-  //}
-  //std::string file = "files/dictionary.txt";
-  //std::cout<<exists(file)<<std::endl;
   IRSystem<FileIndex<CompressedDictionary, CompressedPostings>> ir{};
 
   /** testing time to retrieve terms and posting lists */
@@ -42,8 +35,8 @@ int main(){
 
   //5 runs for each test, to average results
   for(int i=1; i<=5; i++){
-    //file1.open("test/compress_24_dict_" + std::to_string(i)+".txt");
-    //file2.open("test/compress_post_" + std::to_string(i)+".txt");
+    file1.open("test/compress_dict_" + std::to_string(i)+".txt");
+    file2.open("test/compress_post_" + std::to_string(i)+".txt");
     //search n terms at a time
     for(int n=50; n<10000; n+=50){
       double total1 = 0;
@@ -64,14 +57,14 @@ int main(){
         auto end2 = std::chrono::high_resolution_clock::now();
         total2 += std::chrono::duration_cast<std::chrono::microseconds>(end2-begin2).count();
       }
-      //file1 << total1/n << "\n";
-      //file2 << total2/n << "\n";
+      file1 << total1/n << "\n";
+      file2 << total2/n << "\n";
     }
-    //file1.close();
-    //file2.close();
+    file1.close();
+    file2.close();
   }
 
-/**
+
   FileIndex<Dictionary, Postings> index2{};
   for(int i=1; i<=5; i++){
     file1.open("test/dict_" + std::to_string(i)+".txt");
@@ -124,5 +117,5 @@ int main(){
     }
     file1.close();
   }
-*/
+
 }

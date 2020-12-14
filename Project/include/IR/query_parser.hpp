@@ -31,7 +31,7 @@ void QueryParser<IRS>::preprocessTokens(std::vector<std::string>& tokens){
   normalize(terms);
   //perform stemming on terms
   stemming(terms);
-  //back to tokenized query, in the right positions given  by ind
+  //back to tokenized query, in the right positions given by ind
   for(size_t i=0; i<terms.size(); i++){
     tokens.at(ind.at(i)) = terms.at(i);
   }
@@ -207,13 +207,6 @@ void QueryParser<IRS>::parsePartialQuery(std::vector<std::string>& currentQuery,
       cList.push_back(currentList);
       currentQuery.at(i) = currentEscapeTerm;
     }
-    //if currentQuery.at(i) is an operator
-    //else if(currentQuery.at(i).compare("AND")==0 || currentQuery.at(i).compare("OR")==0 || currentQuery.at(i).compare("NOT")==0){
-      //if(currentQuery.at(i+1).compare("NOT")==0){
-        //collapsing: AND NOT = ANDNOT, OR NOT = ORNOT
-        //currentQuery.at(i).append("NOT");
-        //currentQuery.erase(currentQuery.begin()+(i+1));
-      //} }
     }
   }
   //answer query

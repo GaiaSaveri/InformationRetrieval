@@ -11,13 +11,13 @@
 #include"Dictionary.hpp"
 
 struct CompressedDictionary : public Dictionary{
-  /** Name of the file containing the compressed dictionary */
+  /** Name of the file containing the compressed dictionary. */
   std::string compName;
-  /** Block size */
+  /** Block size. */
   int k;
-  /** Last block size (if term%k!=0, then last block may have less than k terms) */
+  /** Last block size (if term%k!=0, then last block may have less than k terms). */
   int lastBlock;
-  /** Number of bytes before the starting byte of each block (in the compressed dictionary) */
+  /** Number of bytes before the starting byte of each block (in the compressed dictionary). */
   std::vector<int> offsets;
   /** Pointer to the beginning of compressed dictionary file. */
   unsigned char* cdptr;

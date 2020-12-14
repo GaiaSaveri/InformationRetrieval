@@ -24,14 +24,14 @@ struct node {
 
   /** Discriminate between internal and leaf nodes. */
   bool leaf;
-  /** Array of keys of a node (sorted, duplicates not allowed) */
+  /** Array of keys of a node (sorted, duplicates not allowed). */
   std::vector<k> keys;
-  /** Unique pointer to the next leaf (only for leaf nodes) */
+  /** Unique pointer to the next leaf (only for leaf nodes). */
   std::unique_ptr<node> next;
   union{ //only one of the following will be active for each node
-    /** Unique pointers to children nodes (for internal nodes) */
+    /** Unique pointers to children nodes (for internal nodes). */
     std::vector<std::unique_ptr<node>> children;
-    /** Pointers to linked lists of values (for leaf nodes) */
+    /** Pointers to linked lists of values (for leaf nodes). */
     std::vector<LinkedList*> values;
   };
   /**
@@ -52,10 +52,9 @@ struct node {
     else if (!l) new (&this->children) std::vector<std::unique_ptr<node>>;
   }
   /**
-   *\brief Custom constructor.
+   *\brief Custom constructor (leaf nodes).
    *\param key Key to insert in the node we are constructing.
    *\param value Value to insert in the node we are contructing.
-   *
    */
   node(k key, v value){
     leaf = true;
@@ -66,7 +65,7 @@ struct node {
     this->values.push_back(ll);
   }
   /**
-   *\brief Custom constructor.
+   *\brief Custom constructor (internal nodes).
    *\param key Key to insert in the node we are constructing.
    *\param child1 Pointer to the node that has to become child of the current node.
    *\param child2 Pointer to the node that has to become child of the current node.

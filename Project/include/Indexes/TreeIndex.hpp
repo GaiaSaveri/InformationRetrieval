@@ -55,7 +55,7 @@ struct TreeIndex{
    *\param dirname Name of the directory containing all the documents of our collection.
    *
    *The directory is first scanned to get all the filenames. Then for each file a document is
-   *instanciated and all the words (tokens) present in the file are preprocessed and
+   *instanciated and all the words (types) present in the file are preprocessed and
    *inserted in the tree (i.e. in the index), as well as the DocId associated to the document
    *we are scanning.
    */

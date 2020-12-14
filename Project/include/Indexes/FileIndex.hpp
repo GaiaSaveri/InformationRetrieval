@@ -12,14 +12,14 @@
 #include"../B+Tree/BPTree.hpp"
 
 /**
- *\taparam D Type of dictionary (either Dictionary or CompressedDictionary).
+ *\tparam D Type of dictionary (either Dictionary or CompressedDictionary).
  *\tparam P Type of the posting lists (either Postings or CompressedPostings).
  */
 template<typename D, typename P>
 struct FileIndex{
-  /** Collection of all the terms inside the inverted index */
+  /** Collection of all the terms inside the inverted index. */
   D dictionary;
-  /** Posting lists associated to each of the terms in the dictionary */
+  /** Posting lists associated to each of the terms in the dictionary. */
   P postingList;
   /**
    *\brief Default constructor.

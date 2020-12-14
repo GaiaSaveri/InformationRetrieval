@@ -7,7 +7,7 @@
 #define __LINKEDLIST_
 
 #include<iostream>
-#include<memory> 
+#include<memory>
 #include<iterator>
 #include<algorithm>
 #include<vector>
@@ -90,7 +90,7 @@ public:
   /**
    *\brief Move assignment.
    *\param l List to be moved in the current list.
-   *\return List& Midified list.
+   *\return List& Modified list.
    */
   List& operator=(List&& l) noexcept = default;
   /**
@@ -107,7 +107,7 @@ public:
   /**
    *\brief Function to insert an element inside a linked list.
    *\param v Value to insert
-   *\param m Method that specifies if we need to insert at the beginning of the end of the list.
+   *\param m Method that specifies if we need to insert at the beginning or at the end of the list.
    */
   template<class OT>
   void insert(OT&& v, const method m);
@@ -402,14 +402,12 @@ void List<T>::andnot(const List& l, List& a){
     v1 = tmp1->value;
     v2 = tmp2->value;
     if(v1==v2){
-      //u.insert(v1, method::push_back);
       tmp1 = tmp1->next.get();
       tmp2 = tmp2->next.get();
     } else if(v1<v2) {
       a.insert(v1, method::push_back);
       tmp1 = tmp1->next.get();
     } else if(v1>v2){
-      //u.insert(v2, method::push_back);
       tmp2 = tmp2->next.get();
     }
   }

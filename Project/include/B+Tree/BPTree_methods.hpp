@@ -201,7 +201,6 @@ void BPTree<Tk,Tv>::insertInternal(Tk key, typename BPTree<Tk,Tv>::Node* parent,
       Tk partitionKey = fakeNode.at(partitionIdx);
 
       (parent)->keys.resize(partitionIdx);
-      //(parent)->children.resize(partitionIdx+1);
       (parent)->children.reserve(partitionIdx + 1);
 
 
