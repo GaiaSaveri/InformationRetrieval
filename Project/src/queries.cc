@@ -82,7 +82,7 @@ int main(){
 
   /** correctness test for complex queries */
 
-  std::ifstream file1("../data/complex_queries.txt");
+  std::ifstream file1("data/complex_queries.txt");
   i = 1;
   while(std::getline(file1, line)){
     List<int> l1 = ir1.answer_query(line);
