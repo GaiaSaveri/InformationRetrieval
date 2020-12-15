@@ -8,7 +8,7 @@ Information Retrieval exam 2020-2021.
 
 This repository contains the following folders:
 
-* `data`, which contains the dataset used in this project (subfolder `documents`). It is a publicly available version of the Reuters-21578 corpus. It is a collection of 10788 documents from the Reuters financial newswire service. This dataset comes with a set of stop-words (file `stopwords`), used during linguistic preprocessing.
+* `data`, which contains the dataset used in this project (subfolder `documents`). It is a publicly available subset of the Reuters-21578 corpus. It is a collection of documents from the Reuters financial newswire service. This dataset comes with a set of stop-words (file `stopwords`), used during linguistic preprocessing.
 The other files in this folder are files I produced for benchmark purposes:
 
   * `words.txt` contains the un-normalised words present in the corpus (without duplicates), it is used inside the file `python/Queries.ipynb` to built two datasets of queries. These produced datasets are `simple_queries.txt` (containing queries of the form *term1 BOOL_OP term2*, which run in linear time) and `complex_queries.txt` (containing more complex queries).
@@ -31,7 +31,7 @@ The other files in this folder are files I produced for benchmark purposes:
 
 * `src`: this folder contains the source code used to test the correctness and the performance of the IR System described above. The file `benchmark.cc` tests the time needed to retrieve both terms and posting lists using different types of inverted indexes. The file `query.cc` tests the time took by differently built IR Systems for answering query, and also checks that all systems agree on the result of each query. The file `main.cc` lets the user specify which kind of inverted index he/she wants the Boolean IR System to use in order to answer his/her query.
 
-* `python`: this folder contains some jupyter notebooks used to produce plots shown in the presentation and two sets of test queries. 
+* `python`: this folder contains some jupyter notebooks used to produce plots shown in the presentation and two sets of test queries.
 
 * `test`: this folder contains the files written when running the `benchmark.cc` code, these are used to evaluate the performance of the system under different conditions and to make comparisons between the compressed and the non-compressed representation of the dictionary and the posting lists in terms of speed and size.  
 
